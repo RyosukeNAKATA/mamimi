@@ -1,6 +1,6 @@
 
 # Mamimi is Python version manager
-A little bit fast and modern Python version manager written in Rust
+This cli tool, Mamimi is a little bit fast and modern Python version manager written in Rust.
 Mamimi are inspired from [tako8ki/frum](https://github.com/tako8ki/frum), [Schniz/fnm](https://github.com/Schniz/fnm) and [David-OConnor/pyflow](https://github.com/David-OConnor/pyflow).
 </div>
 
