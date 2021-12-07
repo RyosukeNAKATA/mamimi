@@ -5,7 +5,7 @@ Mamimi are inspired from [tako8ki/frum](https://github.com/tako8ki/frum), [Schni
 </div>
 
 # What means Mamimi ?
-Mamimi means the idol's name, Mamimi Tanaka who appeared in [THE iDOLM@STER SHINY COLORS(BANDAI NAMCO)](https://shinycolors.idolmaster.jp/). Her profile is as follows.[(source: official site)](https://shinycolors.idolmaster.jp/idol/lantica/mamimi.html)
+Mamimi means the idol's name, Mamimi Tanaka who appeared in [THE iDOLM@STER SHINY COLORS(BANDAI NAMCO)](https://shinycolors.idolmaster.jp/). Her profile is as follows.(source: [official site](https://shinycolors.idolmaster.jp/idol/lantica/mamimi.html))
 
 >Downer type, punkish girl who hates trouble. She is a beautiful girl with an outstanding face and style, but she is indifferent to anything other than her own interests. She is in her third year of high school.
 
