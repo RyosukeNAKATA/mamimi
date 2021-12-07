@@ -1,4 +1,3 @@
-use crate::python_version::PythonVersion;
 use anyhow::Result;
 use clap::{AppSettings, Parser};
 use std::path::PathBuf;
@@ -32,7 +31,7 @@ enum SubCommand {
         #[clap(short, long)]
         list: bool,
         #[clap(name = "version")]
-        version: Option<PythonVersion>,
+        python_version: String,
     },
 }
 

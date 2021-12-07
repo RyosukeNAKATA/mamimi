@@ -1,3 +1,4 @@
+use crate::config::MamimiConfig;
 use anyhow::Error;
 use log::debug;
 use std::str::FromStr;
@@ -42,4 +43,61 @@ pub enum Error {
     EnvNotFound,
     #[error(transparent)]
     SemverError(#[from] semver::SemVerError),
+}
+
+pub fn current_version(config: &MamimiConfig) -> Result<Option<PythonVersion>, Error> {
+    debug!(
+        "mamimi_path: {}",
+        config.mamimi_path.clone().unwrap(),
+        to_str().unwrap()
+    );
+    let multishell_path = config.mamimi_path.as_ref().ok_or(Error::EnvNotFound)?;
+
+    if let Ok(resolved_path) = std::fs::canonicalize(multishell_path) {
+        debug!("mamimi_path: {}", resolved_path.to_str().unwrap());
+        let file_name = resolved_path
+            .file_name()
+            .expect("Can't get filename")
+            .to_str()
+            .expect("Invalid OS string");
+        let python_version = PythonVersion::parse(file_name).map_err(Error::SemverError)?;
+        Ok(Some(python_versionAA))
+    } else {
+        Ok(None)
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for PythonVersion {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let version_str = String::deserialize(deserialize)?;
+        PythonVersion::parse(version_str).map_err(serde::de::Error::custom)
+    }
+}
+
+impl std::fmt::Display for PythonVersion {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Semver(semver) => write!(f, "{}", semver),
+            Self::System => write!(f, "system"),
+        }
+    }
+}
+
+impl FromStr for PythonVersion {
+    type Err = semver::SemVerError;
+    fn from_str(s: &str) -> Result<PythonVersion, Self::Err> {
+        Self::parse(s)
+    }
+}
+
+impl PartialEq<semver::Version> for PythonVersion {
+    fn eq(&self, other: &semver::Version) -> bool {
+        match self {
+            Self::Semver(v) => v == other,
+            Self::System => false,
+        }
+    }
 }
