@@ -12,7 +12,7 @@ Mamimi means the idol's name, Mamimi Tanaka who appeared in [THE iDOLM@STER SHIN
 She raises reptiles(chameleon and Leopard gecko). Bye the way, Pythons are a type of snake and are classified as reptiles. So she raises different versions of the snakes...
 
 # Contribution
-Contributions, issues and pull requests are welcome!
+Contributions, issues and pull requests are welcome !
 
 # Featured
 - [tako8ki/frum](https://github.com/tako8ki/frum)
