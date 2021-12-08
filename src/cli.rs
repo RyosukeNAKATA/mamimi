@@ -30,8 +30,34 @@ enum SubCommand {
         /// Lists Python versions avalable to install
         #[clap(short, long)]
         list: bool,
+        /// Options passed to ./configure
         #[clap(name = "version")]
         python_version: String,
+    },
+    /// Uninstall a specific Python version
+    #[clap(name = "uninstall")]
+    Uninstall {
+        #[clap(name = "version")]
+        python_version: String,
+    },
+    /// Lists installed Python version
+    #[clap(name = "versions")]
+    Versions,
+    /// Sets the current Python version
+    #[clap(name = "local")]
+    Local,
+    /// Sets the global Python version
+    #[clap(name = "global")]
+    Global,
+    /// Print shell completions to stdout
+    #[clap(name = "completions")]
+    Completions {
+        /// The shell syntax to use
+        #[clap(short, long)]
+        shell: String,
+        /// Lists installed Python versions
+        #[clap(short, long)]
+        list: bool,
     },
 }
 
