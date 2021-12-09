@@ -1,4 +1,5 @@
 use crate::shell::Shell;
+use indoc::indoc;
 use std::path::Path;
 
 #[derive(Debug)]
@@ -14,7 +15,7 @@ impl Shell for Bash {
     }
 
     fn use_on_cd(&self, _config: &crate::config::MamimiConfig) -> String {
-        indoc::indoc!(
+        indoc!(
             r#"
                 _mamimicd() {
                 \cd "$@" || return $?

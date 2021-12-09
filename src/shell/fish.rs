@@ -3,33 +3,29 @@ use indoc::indoc;
 use std::path::Path;
 
 #[derive(Debug)]
-pub struct Zsh;
+pub struct Fish;
 
-impl Shell for Zsh {
+impl Shell for Fish {
     fn path(&self, path: &Path) -> String {
-        format!("export PATH={:?}:$PATH", path.to_str().unwrap())
+        format!("set -gx PATH {:?} $PATH;", path.to_str().unwrap())
     }
 
     fn set_env_var(&self, name: &str, value: &str) -> String {
-        format!("export {}={:?}", name, value)
+        format!("set -gx {name} {value:?};", name = name, value = value)
     }
 
     fn use_on_cd(&self, _config: &crate::config::MamimiConfig) -> String {
         indoc!(
             r#"
-                autoload -U add-zsh-hook
-                _mamimi_autoload_hook () {
+                function _mamimi_autoload_hook --on-valiable PWD --description 'Change Python version on directory change'
+                    status --is-command-substitution; and return
                     mamimi --log-level quiet local
-                }
-
-                add-zsh-hook chpwd _mamimi_autoload_hook \
-                    && _mamimi_autoload_hook
+                end
             "#
         )
         .into()
     }
-
     fn as_clap_shell(&self) -> clap::Shell {
-        clap::Shell::Zsh
+        clap::Shell::Fish
     }
 }
