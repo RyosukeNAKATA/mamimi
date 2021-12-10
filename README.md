@@ -14,7 +14,7 @@ She raises reptiles(chameleon and Leopard gecko). Bye the way, Pythons are a typ
 # Contribution
 Contributions, issues and pull requests are welcome !
 
-# Featured
+# Reference
 - [tako8ki/frum](https://github.com/tako8ki/frum)
 - [Schniz/fnm](https://github.com/Schniz/fnm)
 - [David-OConnor/pyflow](https://github.com/David-OConnor/pyflow)
