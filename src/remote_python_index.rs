@@ -12,32 +12,36 @@ pub struct IndexPythonVersion {
     //     hide_env_values = true
     // )]
     // pub python_dist_mirror: Url,
+    /// https://npm.taobao.org/mirrors/python/ mirror
     pub python_version: PythonVersion,
     pub url: Url,
     //pub date: chrono::NaiveDate,
 }
 
-pub fn list(base_url: &reqwest::Url) -> Result<Vec<IndexPythonVersion>, reqwest::Error> {
-    let value =
-        reqwest::blocking::get(format!("{}/index.txt", base_url.as_str()).as_str()).text()?;
-
-    //let value = reqwest::blocking::get(format!("https://www.python.org/ftp/python/"))
-    //    .unwrap()
-    //    .text();
-    let re = regex::Regex::new(r"(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)").unwrap();
-    let mut versions = vec![];
-    for (index, line) in value.split('\n').enumurate() {
-        if lineis_empty() || index == 0 {
+pub fn list() -> Result<Vec<IndexPythonVersion>, reqwest::Error> {
+    let value = reqwest::blocking::get(format!("https://www.python.org/ftp/python/").as_str())
+        .unwrap()
+        .text()
+        .unwrap();
+    let mut versions = Vec::new();
+    let doc = scraper::Html::parse_document(&value);
+    let sel = scraper::Selector::parse("a").unwrap();
+    for (index, node) in doc.select(&sel).enumerate() {
+        if node.inner_html().is_empty() || index == 0 {
             continue;
         }
-        let cap = re.captures(line).unwrap();
-        if cap
-            .get(1)
-            .map_or("", to_string(), |m| m.as_str().to_string())
-            .status_with("python3")
-        {
-            continue;
-        }
+        let mut version = node.inner_html();
+        version.retain(|c| c != '/');
+        versions.push(IndexPythonVersion {
+            python_version: match PythonVersion::parse(&version.to_string()) {
+                Ok(v) => v,
+                Err(_) => continue,
+            },
+            url: Url::parse(format!(
+                "https://www.python.org/ftp/python/{}/Python-{}.tar.xz",
+                version, version
+            )),
+        })
     }
     Ok(versions)
 }
