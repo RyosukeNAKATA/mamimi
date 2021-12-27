@@ -1,9 +1,12 @@
 [package]
 name = "mamimi"
-version = "0.1.0"
+version = "0.0.1"
+authors = ["Ryosuke NAKATA <nackan2810@gmail.com>"]
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT"
+homepage = "https://github.com/RyosukeNAKATA/mamimi"
+repository = "https://github.com/RyosukeNAKATA/mamimi"
+readme = "README.md"
 
 [dependencies]
 anyhow = "1.0.51"
@@ -16,5 +19,3 @@ serde = "1.0.130"
 tar = "0.4.38"
 url = "2.2.2"
 xz2 = "0.1.6"
-
-[features]
