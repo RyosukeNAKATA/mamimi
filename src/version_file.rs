@@ -21,7 +21,7 @@ pub fn get_user_version_for_directory(path: PathBuf) -> Option<InputVersion> {
 }
 
 pub fn get_user_version_for_file(path: PathBuf) -> Option<InputVersion> {
-    let file = std::fs::File::open(path).ok?;
+    let file = std::fs::File::open(path).ok()?;
     let version = {
         let mut reader = DecodeReaderBytes::new(file);
         let mut version = String::new();
@@ -47,6 +47,7 @@ pub fn find_up(search_dir: PathBuf, file_name: &str) -> Option<PathBuf> {
             return Some(path);
         }
     }
+    None
 }
 
 fn each_dir(path: PathBuf) -> Vec<PathBuf> {
@@ -54,9 +55,9 @@ fn each_dir(path: PathBuf) -> Vec<PathBuf> {
     let mut paths = vec![path.clone()];
 
     while let Some(parent) = path.clone().parent() {
-        path = parent.to_path_bun();
+        path = parent.to_path_buf();
         debug!("get parent of {:?}...", parent);
-        paths.push(parent.to_path_bun())
+        paths.push(parent.to_path_buf())
     }
     paths.push(PathBuf::from("/"));
 

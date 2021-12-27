@@ -1,6 +1,6 @@
 mod alias;
 mod archive;
-mod cli;
+pub mod cli;
 mod commands;
 mod config;
 mod input_version;

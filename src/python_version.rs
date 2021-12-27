@@ -1,5 +1,5 @@
 use crate::config::MamimiConfig;
-use anyhow::Error;
+use thiserror::Error;
 use log::debug;
 use std::str::FromStr;
 
@@ -32,8 +32,8 @@ impl PythonVersion {
         config: &crate::config::MamimiConfig,
     ) -> Option<std::path::PathBuf> {
         match self {
-            v @ Self::Semver(_) => Some(config.version_dir().join(v.to_string())),
-            Self::system => None,
+            v @ Self::Semver(_) => Some(config.python_version_dir().join(v.to_string())),
+            Self::System => None,
         }
     }
 }

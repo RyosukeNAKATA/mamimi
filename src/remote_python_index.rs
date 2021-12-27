@@ -39,10 +39,10 @@ pub fn list() -> Result<Vec<IndexPythonVersion>, reqwest::Error> {
                 Ok(v) => v,
                 Err(_) => continue,
             },
-            url: Url::parse(format!(
+            url: Url::parse(&format!(
                 "https://www.python.org/ftp/python/{}/Python-{}.tar.xz",
                 version, version
-            )),
+            )).unwrap(),
         })
     }
     Ok(versions)

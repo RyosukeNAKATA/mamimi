@@ -18,7 +18,7 @@ impl Shell for WindowsCommand {
     }
 
     fn use_on_cd(&self, config: &crate::config::MamimiConfig) -> String {
-        let path = config.bash_dir().join("cd.cmd");
+        let path = config.base_dir().join("cd.cmd");
         create_cd_file_at(&path).expect("Can't create cd.cmd file for use-on-cd");
         format!(
             "doskey cd={} $1",

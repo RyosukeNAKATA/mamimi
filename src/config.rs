@@ -4,6 +4,7 @@ use std::path::PathBuf;
 #[derive(Debug)]
 pub struct MamimiConfig {
     pub base_dir: Option<PathBuf>,
+    pub log_level: LogLevel,
     pub mamimi_path: Option<PathBuf>,
 }
 

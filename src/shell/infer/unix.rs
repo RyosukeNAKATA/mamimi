@@ -47,7 +47,7 @@ fn get_process_info(pid: u32) -> std::io::Result<ProcessInfo> {
         .arg("ppid,comm")
         .arg(pid.to_string())
         .stdout(std::process::Stdio::piped())
-        .spwan()?
+        .spawn()?
         .stdout
         .ok_or_else(|| Error::from(ErrorKind::UnexpectedEof))?;
 
@@ -61,7 +61,7 @@ fn get_process_info(pid: u32) -> std::io::Result<ProcessInfo> {
         .next()
         .ok_or_else(|| Error::from(ErrorKind::UnexpectedEof))??;
 
-    let mut parts = line = line.trim().split_whitespace();
+    let mut parts = line.trim().split_whitespace();
     let ppid = parts
         .next()
         .expect("Can't read the ppid from ps, should be the first item in the table");
@@ -86,7 +86,7 @@ mod tests {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
-            .spwan()
+            .spawn()
             .expect("Can't execute command");
         let process_info = get_process_info(subprocess.id());
         let parent_pid = process_info.ok().and_then(|x| x.parent_pid);

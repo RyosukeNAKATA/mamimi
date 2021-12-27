@@ -46,14 +46,15 @@ impl std::str::FromStr for LogLevel {
         match s {
             "quiet" => Ok(Self::Quiet),
             "info" | "all" => Ok(Self::Info),
-            "error" => Err(format!("I don't know the log level of: {:?}", log_level)),
+            "error" => Ok(Self::Error),
+            level => Err(format!("I don't know the log level of: {:?}", level)),
         }
     }
 }
 
 #[macro_export]
 macro_rules! outln {
-    ($config:ident#$level:path, $($expr:expr),+) => {{
+    ($config:ident, $level:path, $($expr:expr),+) => {{
         use $crate::log::LogLevel::*;
         writeln!($config.log_level.write(&$level), $($expr),+).expect("Can't write output");
     }}

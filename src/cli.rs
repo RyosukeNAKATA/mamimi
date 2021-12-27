@@ -20,7 +20,7 @@ pub struct Opts {
 }
 
 #[derive(Parser)]
-enum SubCommand {
+pub enum SubCommand {
     /// Sets environment variables for initializing mamimi
     #[clap(name = "init")]
     Init,
