@@ -25,7 +25,7 @@ impl Shell for Fish {
         )
         .into()
     }
-    fn as_clap_shell(&self) -> clap::Shell {
-        clap::Shell::Fish
-    }
+    // fn as_clap_shell(&self) -> clap::Shell {
+    //     clap::Shell::Fish
+    // }
 }

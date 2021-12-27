@@ -1,3 +1,4 @@
+use crate::log::LogLevel;
 use std::path::PathBuf;
 
 #[derive(Debug)]
@@ -14,7 +15,7 @@ impl Default for MamimiConfig {
                 .ok(),
             //python_build_mirror: reqwest::Url::parse("https://npm.taobao.org/mirrors/python/")
             //    .unwrap(),
-            leg_level: LogLevel::default(),
+            log_level: LogLevel::default(),
             mamimi_path: std::env::var("MAMIMI_MULTISHELL_PATH")
                 .map(std::path::PathBuf::from)
                 .ok(),

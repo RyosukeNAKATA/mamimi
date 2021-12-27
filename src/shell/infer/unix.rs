@@ -1,6 +1,6 @@
 #![cfg(unix)]
 
-use crate::shell::{Bash, Fish, PowerShell, Shell, Zsh};
+use crate::shell::{Bash, Fish, Shell, Zsh};
 use log::debug;
 use std::io::{Error, ErrorKind};
 
@@ -28,7 +28,7 @@ pub fn infer_shell() -> Option<Box<dyn Shell>> {
             "sh" | "bash" => return Some(Box::from(Bash)),
             "zsh" => return Some(Box::from(Zsh)),
             "fish" => return Some(Box::from(Fish)),
-            "pwsh" => return Some(Box::from(PowerShell)),
+            // "pwsh" => return Some(Box::from(PowerShell)),
             cmd_name => debug!("binary is not a supported shell: {:?}", cmd_name),
         };
 
@@ -65,7 +65,7 @@ fn get_process_info(pid: u32) -> std::io::Result<ProcessInfo> {
     let ppid = parts
         .next()
         .expect("Can't read the ppid from ps, should be the first item in the table");
-    let commmand = parts
+    let command = parts
         .next()
         .expect("Can't read the command from ps, should be the second item in the table");
 
@@ -90,6 +90,6 @@ mod tests {
             .expect("Can't execute command");
         let process_info = get_process_info(subprocess.id());
         let parent_pid = process_info.ok().and_then(|x| x.parent_pid);
-        aseret_eq!(parent_pid, Some(std::process::id()));
+        assert_eq!(parent_pid, Some(std::process::id()));
     }
 }

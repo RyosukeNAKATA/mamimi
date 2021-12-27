@@ -46,7 +46,7 @@ impl std::str::FromStr for LogLevel {
         match s {
             "quiet" => Ok(Self::Quiet),
             "info" | "all" => Ok(Self::Info),
-            "error" => Err(format!("I don't know the log level of: {:?}", level)),
+            "error" => Err(format!("I don't know the log level of: {:?}", log_level)),
         }
     }
 }

@@ -3,7 +3,7 @@ use anyhow::Error;
 use log::debug;
 use std::str::FromStr;
 
-#[derive(Dubug, PartialEq, PartialOrd, Eq, Ord, Clone)]
+#[derive(Debug, PartialEq, PartialOrd, Eq, Ord, Clone)]
 pub enum PythonVersion {
     Semver(semver::Version),
     System,
@@ -16,14 +16,12 @@ pub fn is_dotfile(dir: &std::fs::DirEntry) -> bool {
 }
 
 impl PythonVersion {
-    pub fn parse<S: AsRef<str>>(version_str: S) -> Result<Self, semver::SemVerError> {
+    pub fn parse<S: AsRef<str>>(version_str: S) -> Result<Self, semver::Error> {
         let lowercased = version_str.as_ref().to_lowercase();
         let trimed_lowercased = lowercased.trim_start_matches("python-");
         debug!("{}", trimed_lowercased);
         if lowercased == "system" {
             Ok(Self::System)
-        } else if start_with_number(trimed_lowercased) {
-            Ok(Self::Semver(semver::Version::parse(&trimed_lowercased)?))
         } else {
             unreachable!()
         }
@@ -45,14 +43,13 @@ pub enum Error {
     #[error("mamimi path doesn't exist")]
     EnvNotFound,
     #[error(transparent)]
-    SemverError(#[from] semver::SemVerError),
+    SemverError(#[from] semver::Error),
 }
 
 pub fn current_python_version(config: &MamimiConfig) -> Result<Option<PythonVersion>, Error> {
     debug!(
         "mamimi_path: {}",
-        config.mamimi_path.clone().unwrap(),
-        to_str().unwrap()
+        config.mamimi_path.clone().unwrap().to_str().unwrap()
     );
     let multishell_path = config.mamimi_path.as_ref().ok_or(Error::EnvNotFound)?;
 
@@ -64,7 +61,7 @@ pub fn current_python_version(config: &MamimiConfig) -> Result<Option<PythonVers
             .to_str()
             .expect("Invalid OS string");
         let python_version = PythonVersion::parse(file_name).map_err(Error::SemverError)?;
-        Ok(Some(python_versionAA))
+        Ok(Some(python_version))
     } else {
         Ok(None)
     }
@@ -75,7 +72,7 @@ impl<'de> serde::Deserialize<'de> for PythonVersion {
     where
         D: serde::Deserializer<'de>,
     {
-        let version_str = String::deserialize(deserialize)?;
+        let version_str = String::deserialize(deserializer)?;
         PythonVersion::parse(version_str).map_err(serde::de::Error::custom)
     }
 }
@@ -90,7 +87,7 @@ impl std::fmt::Display for PythonVersion {
 }
 
 impl FromStr for PythonVersion {
-    type Err = semver::SemVerError;
+    type Err = semver::Error;
     fn from_str(s: &str) -> Result<PythonVersion, Self::Err> {
         Self::parse(s)
     }

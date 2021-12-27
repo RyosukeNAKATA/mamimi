@@ -27,7 +27,7 @@ impl Shell for Bash {
         )
         .into()
     }
-    fn as_clap_shell(&self) -> clap::Shell {
-        clap::Shell::Bash
-    }
+    // fn as_clap_shell(&self) -> clap::Shell {
+    //     clap::Shell::Bash
+    // }
 }

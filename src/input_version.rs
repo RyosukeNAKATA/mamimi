@@ -1,11 +1,11 @@
 use crate::python_version::PythonVersion;
 use std::str::FromStr;
 
-#[derive(clone, Debug)]
+#[derive(Clone, Debug)]
 pub enum InputVersion {
     Major(u64),
     MajorMinor(u64, u64),
-    Full(Version),
+    Full(PythonVersion),
 }
 
 impl InputVersion {
@@ -42,7 +42,7 @@ impl std::fmt::Display for InputVersion {
 }
 
 impl FromStr for InputVersion {
-    type Err = semver::SemVerError;
+    type Err = semver::Error;
     fn from_str(s: &str) -> Result<InputVersion, Self::Err> {
         match PythonVersion::parse(s) {
             Ok(v) => Ok(Self::Full(v)),

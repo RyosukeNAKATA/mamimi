@@ -7,7 +7,7 @@ pub fn create_alias(
     config: &MamimiConfig,
     common_name: &str,
     version: &PythonVersion,
-) -> sid::io::Result<()> {
+) -> std::io::Result<()> {
     let aliases_dir = config.aliases_dir();
     std::fs::create_dir_all(&aliases_dir)?;
 

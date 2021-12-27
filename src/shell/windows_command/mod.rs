@@ -9,7 +9,7 @@ impl Shell for WindowsCommand {
         let current_path = std::env::var_os("path").expect("Can't read Path env var");
         let mut split_paths: Vec<_> = std::env::split_paths(&current_path).collect();
         split_paths.insert(0, path.to_path_buf());
-        let new_path = std::env::join_path(split_paths).expect("Can't join paths");
+        let new_path = std::env::join_paths(split_paths).expect("Can't join paths");
         format!("SET PATH={}", new_path.to_str().expect("Cant't read PATH"))
     }
 
@@ -26,14 +26,14 @@ impl Shell for WindowsCommand {
         )
     }
 
-    fn as_clap_shell(&self) -> clap::Shell {
-        panic!("Shell completion is not supported for Windows Commnad Promt. Maybe try useing PowerShell for a better experience ?");
-    }
+    // fn as_clap_shell(&self) -> clap::Shell {
+    //     panic!("Shell completion is not supported for Windows Commnad Promt. Maybe try useing PowerShell for a better experience ?");
+    // }
 }
 
 fn create_cd_file_at(path: &std::path::Path) -> std::io::Result<()> {
     use std::io::Write;
-    let cmd_contents = include_bytes("./cd.cmd");
+    let cmd_contents = include_bytes!("./cd.cmd");
     let mut file = std::fs::File::create(path)?;
     file.write_all(cmd_contents)?;
     Ok(())

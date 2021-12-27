@@ -15,7 +15,7 @@ impl TarXz {
 
 impl Extract for TarXz {
     fn extract_into<P: AsRef<Path>>(self, path: P) -> Result<(), Error> {
-        let xz_stream = xz2::read::XzDecodeer::new(self.response);
+        let xz_stream = xz2::read::XzDecoder::new(self.response);
         let mut tar_archive = tar::Archive::new(xz_stream);
         tar_archive.unpack(&path)?;
         Ok(())

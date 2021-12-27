@@ -26,7 +26,7 @@ impl From<std::io::Error> for Error {
     }
 }
 
-impl From<std::io::ZipError> for Error {
+impl From<zip::result::ZipError> for Error {
     fn from(err: zip::result::ZipError) -> Self {
         Self::ZipError(err)
     }

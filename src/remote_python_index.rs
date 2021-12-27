@@ -1,6 +1,8 @@
 use crate::python_version::PythonVersion;
 use clap::{AppSettings, Parser};
 use url::Url;
+use reqwest;
+use scraper;
 
 pub struct IndexPythonVersion {
     // /// https://npm.taobao.org/mirrors/python/ mirror
