@@ -8,8 +8,11 @@ pub enum PythonVersion {
     Semver(semver::Version),
     System,
 }
-fn start_with_number(s: &str) -> bool {
-    s.chars().next().map(|x| x.is_digit(10)).unwrap_or(false)
+pub fn is_dotfile(dir: &std::fs::DirEntry) -> bool {
+    dir.file_name()
+        .to_str()
+        .map(|s| s.starts_with('.'))
+        .unwrap_or(false)
 }
 
 impl PythonVersion {
@@ -45,7 +48,7 @@ pub enum Error {
     SemverError(#[from] semver::SemVerError),
 }
 
-pub fn current_version(config: &MamimiConfig) -> Result<Option<PythonVersion>, Error> {
+pub fn current_python_version(config: &MamimiConfig) -> Result<Option<PythonVersion>, Error> {
     debug!(
         "mamimi_path: {}",
         config.mamimi_path.clone().unwrap(),
