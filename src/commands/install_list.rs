@@ -14,7 +14,16 @@ pub struct InstallList {}
 impl crate::command::Command for InstallList {
     type Error = MamimiError;
 
-    fn apply(&self, config: &crate::config::MamimiError) -> Result<(), MamimiError> {
-        let versions = crate::remote_python_index::list(&config.python_mirror)?;
+    fn apply(&self) -> Result<(), MamimiError> {
+        let versions = crate::remote_python_index::list()?;
+        let versions = versions
+            .into_iter()
+            .map(|v| v.python_version)
+            .sorted()
+            .dedup();
+        for version in versions {
+            crate::outln!(config#info, "{}", version);
+        }
+        Ok(())
     }
 }
