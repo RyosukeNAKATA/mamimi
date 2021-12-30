@@ -33,7 +33,7 @@ impl MamimiConfig {
         }))
     }
 
-    pub fn python_version_dir(&self) -> std::path::PathBuf {
+    pub fn python_versions_dir(&self) -> std::path::PathBuf {
         ensure_dir_exists(self.base_dir().join("versions"))
     }
 

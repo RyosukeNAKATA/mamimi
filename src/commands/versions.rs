@@ -17,7 +17,7 @@ pub enum MamimiError {
 
 pub struct Versions {}
 
-impl crate::command::Cmmand for Versions {
+impl crate::command::Command for Versions {
     type Error = MamimiError;
 
     fn apply(&self, config: &MamimiConfig) -> Result<(), Self::Error> {
@@ -29,7 +29,7 @@ impl crate::command::Cmmand for Versions {
 
             let path = entry.path();
             let filename = path
-                .filename()
+                .file_name()
                 .ok_or_else(|| std::io::Error::from(std::io::ErrorKind::NotFound))
                 .map_err(MamimiError::IoError)?
                 .to_str()
@@ -43,12 +43,12 @@ impl crate::command::Cmmand for Versions {
             );
             if let Some(current_python_version) = current_python_version {
                 if current_python_version == version {
-                    outln!(config#info, "{} {}", "*".green(), version.to_string().green());
+                    outln!(config #info, "{} {}", "*".green(), version.to_string().green());
                 } else {
-                    outln!(config#info, "{} {}", " ", version);
+                    outln!(config #info, "{} {}", " ", version);
                 }
             } else {
-                outln!(config#info, "{} {}", " ", version);
+                outln!(config #info, "{} {}", " ", version);
             };
         }
         Ok(())

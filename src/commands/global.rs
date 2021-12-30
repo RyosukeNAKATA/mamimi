@@ -29,7 +29,7 @@ impl crate::command::Command for Global {
             version => return Err(MamimiError::VersionNotFound { version }),
         };
         if !&config
-            .python_version_dir()
+            .python_versions_dir()
             .join(self.version.to_string())
             .exists()
         {

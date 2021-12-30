@@ -8,7 +8,7 @@ pub trait Command {
 
     fn apply(&self, config: &MamimiConfig) -> Result<(), Self::Error>;
     fn handle_error(err: Self::Error, config: &MamimiConfig) {
-        outln!(config#Error, "{} {}", "error:".red().bold(),format!("{}",err).red());
+        outln!(config #Error, "{} {}", "error:".red().bold(),format!("{}",err).red());
         std::process::exit(1);
     }
 
