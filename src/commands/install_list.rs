@@ -1,5 +1,7 @@
-use anyhow::Error;
 use itertools::Itertools;
+use thiserror::Error;
+
+use crate::config;
 
 #[derive(Error, Debug)]
 pub enum MamimiError {
@@ -14,7 +16,7 @@ pub struct InstallList {}
 impl crate::command::Command for InstallList {
     type Error = MamimiError;
 
-    fn apply(&self) -> Result<(), MamimiError> {
+    fn apply(&self, config: &crate::config::MamimiConfig) -> Result<(), MamimiError> {
         let versions = crate::remote_python_index::list()?;
         let versions = versions
             .into_iter()
@@ -22,7 +24,7 @@ impl crate::command::Command for InstallList {
             .sorted()
             .dedup();
         for version in versions {
-            crate::outln!(config#info, "{}", version);
+            crate::outln!(config #Info, "{}", version);
         }
         Ok(())
     }
