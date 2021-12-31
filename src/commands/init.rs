@@ -1,7 +1,7 @@
 use crate::shell::infer_shell;
 use crate::shell::Shell;
 use crate::symlink::create_symlink_dir;
-use anyhow::Error;
+use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum MamimiError {
@@ -20,7 +20,7 @@ impl crate::command::Command for Init {
 
     fn apply(&self, config: &crate::config::MamimiConfig) -> Result<(), Self::Error> {
         let shell: Box<dyn Shell> = infer_shell().ok_or(MamimiError::CantInferShell)?;
-        let mamimi_path = create_symlink_dir(&config);
+        let mamimi_path = create_symlink(&config);
         let binary_path = if cfg!(windows) {
             mamimi_path.clone()
         } else {
@@ -39,10 +39,10 @@ impl crate::command::Command for Init {
             "{}",
             shell.set_env_var("MAMIMI_LOGLEVEL", config.log_level.clone().into())
         );
-        println!(
-            "{}",
-            shell.set_env_var("MAMIMI_PYTHON_BUILD_MIRROR", config.python_mirror.as_str())
-        );
+        //println!(
+        //    "{}",
+        //    shell.set_env_var("MAMIMI_PYTHON_BUILD_MIRROR", config.python_mirror.as_str())
+        //);
         println!("{}", shell.use_on_cd(&config));
         Ok(())
     }
@@ -55,7 +55,8 @@ fn create_symlink(config: &crate::config::MamimiConfig) -> std::path::PathBuf {
         temp_dir = generate_symlink_path(&system_temp_dir);
     }
 
-    create_symlink_dir(config.default_version_dir(), &temp_dir).expect("Can't create symlink");
+    create_symlink_dir(config.default_python_version_dir(), &temp_dir)
+        .expect("Can't create symlink");
     temp_dir
 }
 
