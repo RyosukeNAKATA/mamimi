@@ -1,8 +1,8 @@
 use crate::python_version::PythonVersion;
 use clap::{AppSettings, Parser};
-use url::Url;
 use reqwest;
 use scraper;
+use url::Url;
 
 pub struct IndexPythonVersion {
     // /// https://npm.taobao.org/mirrors/python/ mirror
@@ -16,7 +16,6 @@ pub struct IndexPythonVersion {
     // pub python_dist_mirror: Url,
     /// https://npm.taobao.org/mirrors/python/ mirror
     pub python_version: PythonVersion,
-    pub url: Url,
     //pub date: chrono::NaiveDate,
 }
 
@@ -25,9 +24,10 @@ pub fn list() -> Result<Vec<IndexPythonVersion>, reqwest::Error> {
         .unwrap()
         .text()
         .unwrap();
-    let mut versions = Vec::new();
     let doc = scraper::Html::parse_document(&value);
     let sel = scraper::Selector::parse("a").unwrap();
+
+    let mut versions = Vec::new();
     for (index, node) in doc.select(&sel).enumerate() {
         if node.inner_html().is_empty() || index == 0 {
             continue;
@@ -39,11 +39,8 @@ pub fn list() -> Result<Vec<IndexPythonVersion>, reqwest::Error> {
                 Ok(v) => v,
                 Err(_) => continue,
             },
-            url: Url::parse(&format!(
-                "https://www.python.org/ftp/python/{}/Python-{}.tar.xz",
-                version, version
-            )).unwrap(),
         })
     }
+    versions.sort_by(|a, b| a.python_version.cmp(&b.python_version));
     Ok(versions)
 }

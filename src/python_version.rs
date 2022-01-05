@@ -32,7 +32,7 @@ impl PythonVersion {
         config: &crate::config::MamimiConfig,
     ) -> Option<std::path::PathBuf> {
         match self {
-            v @ Self::Semver(_) => Some(config.python_version_dir().join(v.to_string())),
+            v @ Self::Semver(_) => Some(config.python_versions_dir().join(v.to_string())),
             Self::System => None,
         }
     }
