@@ -11,7 +11,7 @@ readme = "README.md"
 [dependencies]
 anyhow = "1.0.51"
 chrono = "0.4.19"
-clap = "=3.0.0-beta.5"
+clap = "3.0.0"
 colored = "2.0.0"
 dirs = "4.0.0"
 encoding_rs_io = "0.1.7"
@@ -28,3 +28,5 @@ thiserror = "1.0.30"
 url = "2.2.2"
 xz2 = "0.1.6"
 zip = "0.5.13"
+
+[features]
