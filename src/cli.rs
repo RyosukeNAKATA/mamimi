@@ -1,8 +1,8 @@
 use anyhow::Result;
-use clap::{AppSettings, Parser};
+use clap::Parser;
 use std::path::PathBuf;
 
-#[derive(Parser)]
+#[derive(clap::Parser)]
 #[clap(
     name = "Mamimi",
     version = "0.0.1",
