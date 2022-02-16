@@ -12,14 +12,14 @@ impl Default for LogLevel {
 }
 
 impl LogLevel {
-    pub fn is_writable(&self, level: &Self) -> bool {
+    pub fn is_writable(&self, logging: &Self) -> bool {
         use std::cmp::Ordering;
-        matches!(self.cmp(level), Ordering::Greater | Ordering::Equal)
+        matches!(self.cmp(logging), Ordering::Greater | Ordering::Equal)
     }
 
-    pub fn write(&self, level: &Self) -> Box<dyn std::io::Write> {
-        if self.is_writable(level) {
-            match level {
+    pub fn write_for(&self, logging: &Self) -> Box<dyn std::io::Write> {
+        if self.is_writable(logging) {
+            match logging {
                 Self::Error => Box::from(std::io::stderr()),
                 _ => Box::from(std::io::stdout()),
             }
@@ -27,10 +27,14 @@ impl LogLevel {
             Box::from(std::io::sink())
         }
     }
+
+    pub fn passible_values() -> &'static [&'static str; 4] {
+        &["quiet", "info", "all", "error"]
+    }
 }
 
 impl From<LogLevel> for &'static str {
-    fn from(log_level: LogLevel) -> &'static str {
+    fn from(log_level: LogLevel) -> Self {
         match log_level {
             LogLevel::Quiet => "quiet",
             LogLevel::Info => "info",
@@ -40,22 +44,22 @@ impl From<LogLevel> for &'static str {
 }
 
 impl std::str::FromStr for LogLevel {
-    type Err = String;
+    type Err = &'static str;
 
     fn from_str(s: &str) -> Result<LogLevel, Self::Err> {
         match s {
             "quiet" => Ok(Self::Quiet),
             "info" | "all" => Ok(Self::Info),
             "error" => Ok(Self::Error),
-            level => Err(format!("I don't know the log level of: {:?}", level)),
+            _ => Err("Unsupported log level"),
         }
     }
 }
 
 #[macro_export]
 macro_rules! outln {
-    ($config:ident #$level:path, $($expr:expr),+) => {{
+    ($config:ident, $level:path, $($expr:expr),+) => {{
         use $crate::log::LogLevel::*;
-        writeln!($config.log_level.write(&$level), $($expr),+).expect("Can't write output");
+        writeln!($config.log_level().write_for(&$level), $($expr),+).expect("Can't write output");
     }}
 }
