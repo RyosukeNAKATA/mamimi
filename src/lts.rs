@@ -1,0 +1,45 @@
+use crate::remote_python_index::IndexedPythonVersion;
+use std::fmt::Display;
+
+#[derive(Debug, PartialEq, PartialOrd, Eq, Ord, Clone)]
+pub enum LtsType {
+    Latest,
+    CodeName(String),
+}
+
+impl From<&str> for LtsType {
+    fn from(s: &str) -> Self {
+        if s == "*" || s == "latest" {
+            Self::Latest
+        } else {
+            Self::CodeName(s.to_string())
+        }
+    }
+}
+
+impl Display for LtsType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Latest => write!(f, "latest"),
+            Self::CodeName(s) => write!(f, "{}", s),
+        }
+    }
+}
+
+impl LtsType {
+    pub fn pick_latest<'vec>(
+        &self,
+        versions: &'vec [IndexedPythonVersion],
+    ) -> Option<&'vec IndexedPythonVersion> {
+        match self {
+            Self::Latest => versions.iter().filter(|x| x.lts.is_some()).last(),
+            Self::CodeName(s) => versions
+                .iter()
+                .filter(|x| match &x.lts {
+                    None => false,
+                    Some(x) => s.to_lowercase() == x.to_lowercase(),
+                })
+                .last(),
+        }
+    }
+}

@@ -1,12 +1,14 @@
 use crate::config::MamimiConfig;
-use thiserror::Error;
 use log::debug;
 use std::str::FromStr;
+use thiserror::Error;
 
 #[derive(Debug, PartialEq, PartialOrd, Eq, Ord, Clone)]
 pub enum PythonVersion {
     Semver(semver::Version),
-    System,
+    Lts(LtsType),
+    Alias(String),
+    Bypassed,
 }
 pub fn is_dotfile(dir: &std::fs::DirEntry) -> bool {
     dir.file_name()
@@ -96,8 +98,8 @@ impl FromStr for PythonVersion {
 impl PartialEq<semver::Version> for PythonVersion {
     fn eq(&self, other: &semver::Version) -> bool {
         match self {
+            Self::Bypassed | Self::Lts(_) | Self::Alias(_) => false,
             Self::Semver(v) => v == other,
-            Self::System => false,
         }
     }
 }
