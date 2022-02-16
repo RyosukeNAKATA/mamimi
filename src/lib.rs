@@ -11,3 +11,8 @@ mod remote_python_index;
 mod shell;
 mod symlink;
 mod version_file;
+
+//#[macro_use]
+//mod default_version;
+//mod directories;
+//mod log_level;
