@@ -11,6 +11,7 @@ mod python_version;
 mod remote_python_index;
 mod shell;
 mod symlink;
+mod system_version;
 mod version_file;
 
 //#[macro_use]
