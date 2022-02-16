@@ -8,7 +8,7 @@ pub fn create_symlink_dir<P: AsRef<Path>, U: AsRef<Path>>(from: P, to: U) -> std
 
 #[cfg(windows)]
 pub fn create_symlink_dir<P: AsRef<Path>, U: AsRef<Path>>(from: P, to: U) -> std::io::Result<()> {
-    std::os::windwos::fs::symlink(from, to)?;
+    junction::create(from, to)?;
     Ok(())
 }
 
@@ -20,6 +20,10 @@ pub fn remove_symlink_dir<P: AsRef<Path>>(path: P) -> std::io::Result<()> {
 
 #[cfg(windows)]
 pub fn remove_symlink_dir<P: AsRef<Path>>(path: P) -> std::io::Result<()> {
-    std::fs::remove_dir(path)?;
+    std::fs::remove_file(path)?;
     Ok(())
+}
+
+pub fn shallow_read_symlink<P: AsRef<Path>>(path: P) -> std::io::Result<std::path::PathBuf> {
+    std::fs::read_link(path)
 }
