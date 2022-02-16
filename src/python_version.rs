@@ -1,7 +1,7 @@
 use crate::config::MamimiConfig;
+use crate::lts::LtsType;
 use log::debug;
 use std::str::FromStr;
-use thiserror::Error;
 
 #[derive(Debug, PartialEq, PartialOrd, Eq, Ord, Clone)]
 pub enum PythonVersion {
@@ -10,6 +10,7 @@ pub enum PythonVersion {
     Alias(String),
     Bypassed,
 }
+
 pub fn is_dotfile(dir: &std::fs::DirEntry) -> bool {
     dir.file_name()
         .to_str()
@@ -22,7 +23,7 @@ impl PythonVersion {
         let lowercased = version_str.as_ref().to_lowercase();
         let trimed_lowercased = lowercased.trim_start_matches("python-");
         debug!("{}", trimed_lowercased);
-        if lowercased == "system" {
+        if lowercased == system {
             Ok(Self::System)
         } else {
             unreachable!()
