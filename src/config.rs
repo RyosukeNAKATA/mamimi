@@ -1,4 +1,6 @@
-use crate::log::LogLevel;
+use crate::log_level::LogLevel;
+use crate::path_ext::PathExt;
+use dirs::{data_dir, home_dir};
 use std::path::PathBuf;
 
 #[derive(Debug)]
