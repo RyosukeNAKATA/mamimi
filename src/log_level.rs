@@ -5,12 +5,6 @@ pub enum LogLevel {
     Info,
 }
 
-impl Default for LogLevel {
-    fn default() -> Self {
-        Self::Info
-    }
-}
-
 impl LogLevel {
     pub fn is_writable(&self, logging: &Self) -> bool {
         use std::cmp::Ordering;
