@@ -1,6 +1,7 @@
-use crate::config::MamimiConfig;
+use crate::alias;
+use crate::config;
 use crate::lts::LtsType;
-use log::debug;
+use crate::system_version;
 use std::str::FromStr;
 
 #[derive(Debug, PartialEq, PartialOrd, Eq, Ord, Clone)]
@@ -18,55 +19,64 @@ pub fn is_dotfile(dir: &std::fs::DirEntry) -> bool {
         .unwrap_or(false)
 }
 
+fn first_letter_is_number(s: &str) -> bool {
+    s.chars().next().map_or(false, |x| x.is_digit(10))
+}
+
 impl PythonVersion {
     pub fn parse<S: AsRef<str>>(version_str: S) -> Result<Self, semver::Error> {
         let lowercased = version_str.as_ref().to_lowercase();
-        let trimed_lowercased = lowercased.trim_start_matches("python-");
-        debug!("{}", trimed_lowercased);
-        if lowercased == system {
-            Ok(Self::System)
+        if lowercased == system_version::display_name() {
+            Ok(Self::Bypassed)
+        } else if lowercased.starts_with("lts-") || lowercased.starts_with("lts/") {
+            let lts_type = LtsType::from(&lowercased[4..]);
+        } else if first_letter_is_number(lowercased.trim_start_matches('v')) {
+            let version_plain = lowercased.trim_start_matches('v');
+            let sver = semver::Version::parse(version_plain)?;
         } else {
-            unreachable!()
+            Ok(Self::Alias(lowercased))
         }
     }
 
-    pub fn installation_path(
-        &self,
-        config: &crate::config::MamimiConfig,
-    ) -> Option<std::path::PathBuf> {
+    pub fn alias_name(&self) -> Option<String> {
         match self {
-            v @ Self::Semver(_) => Some(config.python_versions_dir().join(v.to_string())),
-            Self::System => None,
+            l @ (&Self::Lts(_) | &Self::Alias(_)) => Some(l.v_str()),
+            _ => None,
         }
     }
-}
 
-#[derive(Error, Debug)]
-pub enum Error {
-    #[error("mamimi path doesn't exist")]
-    EnvNotFound,
-    #[error(transparent)]
-    SemverError(#[from] semver::Error),
-}
+    pub fn find_aliases(
+        &self,
+        config: &config::MamimiConfig,
+    ) -> std::io::Result<Vec<alias::StroredAlias>> {
+        let aliases = alias::list_aliases(config)?
+            .drain(..)
+            .filter(|alias| alias.s_ver() == self.v_str())
+            .collect();
+        Ok(aliases)
+    }
 
-pub fn current_python_version(config: &MamimiConfig) -> Result<Option<PythonVersion>, Error> {
-    debug!(
-        "mamimi_path: {}",
-        config.mamimi_path.clone().unwrap().to_str().unwrap()
-    );
-    let multishell_path = config.mamimi_path.as_ref().ok_or(Error::EnvNotFound)?;
+    pub fn v_str(&self) -> String {
+        format!("{}", self)
+    }
 
-    if let Ok(resolved_path) = std::fs::canonicalize(multishell_path) {
-        debug!("mamimi_path: {}", resolved_path.to_str().unwrap());
-        let file_name = resolved_path
-            .file_name()
-            .expect("Can't get filename")
-            .to_str()
-            .expect("Invalid OS string");
-        let python_version = PythonVersion::parse(file_name).map_err(Error::SemverError)?;
-        Ok(Some(python_version))
-    } else {
-        Ok(None)
+    pub fn installation_path(&self, config: &crate::config::MamimiConfig) -> std::path::PathBuf {
+        match self {
+            v @ (&Self::Lts(_) | &Self::Alias(_)) => {
+                config.aliases_dir().join(v.alias_name().unwrap())
+            }
+            v @ Self::Semver(_) => config
+                .installations_dir()
+                .join(v.v_str())
+                .join("installation"),
+        }
+    }
+
+    pub fn root_path(&self, config: &config::MamimiConfig) -> Option<std::path::PathBuf> {
+        let path = self.installation_path(config);
+        let mut canon_path = path.canonicalize().ok()?;
+        canon_path.pop();
+        Some(canon_path)
     }
 }
 
@@ -83,8 +93,10 @@ impl<'de> serde::Deserialize<'de> for PythonVersion {
 impl std::fmt::Display for PythonVersion {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Semver(semver) => write!(f, "{}", semver),
-            Self::System => write!(f, "system"),
+            Self::Bypassed => write!(f, "{}", system_version::display_name()),
+            Self::Lts(lts) => write!(f, "lts-{}", lts),
+            Self::Semver(semver) => write!(f, "v{}", semver),
+            Self::Alias(alias) => write!(f, "{}", alias),
         }
     }
 }
