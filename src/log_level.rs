@@ -28,7 +28,7 @@ impl LogLevel {
         }
     }
 
-    pub fn passible_values() -> &'static [&'static str; 4] {
+    pub fn possible_values() -> &'static [&'static str; 4] {
         &["quiet", "info", "all", "error"]
     }
 }

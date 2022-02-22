@@ -8,7 +8,7 @@ pub enum Arch {
     Armv7l,
     Ppc64le,
     Ppc64,
-    s390x,
+    S390x,
 }
 
 #[cfg(unix)]

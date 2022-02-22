@@ -1,10 +1,10 @@
 use crate::python_version::PythonVersion;
-use clap::{AppSettings, Parser};
 use reqwest;
 use scraper;
+use serde::Deserialize;
 use url::Url;
 
-pub struct IndexPythonVersion {
+pub struct IndexedPythonVersion {
     // /// https://npm.taobao.org/mirrors/python/ mirror
     // #[clap(
     //     long,
@@ -16,10 +16,11 @@ pub struct IndexPythonVersion {
     // pub python_dist_mirror: Url,
     /// https://npm.taobao.org/mirrors/python/ mirror
     pub python_version: PythonVersion,
-    //pub date: chrono::NaiveDate,
+    #[serde(with = "lts_status")]
+    pub lts: Option<String>,
 }
 
-pub fn list() -> Result<Vec<IndexPythonVersion>, reqwest::Error> {
+pub fn list() -> Result<Vec<IndexedPythonVersion>, reqwest::Error> {
     let value = reqwest::blocking::get(format!("https://www.python.org/ftp/python/").as_str())
         .unwrap()
         .text()
@@ -27,14 +28,14 @@ pub fn list() -> Result<Vec<IndexPythonVersion>, reqwest::Error> {
     let doc = scraper::Html::parse_document(&value);
     let sel = scraper::Selector::parse("a").unwrap();
 
-    let mut versions = Vec::new();
+    let mut versions = vec![];
     for (index, node) in doc.select(&sel).enumerate() {
         if node.inner_html().is_empty() || index == 0 {
             continue;
         }
         let mut version = node.inner_html();
         version.retain(|c| c != '/');
-        versions.push(IndexPythonVersion {
+        versions.push(IndexedPythonVersion {
             python_version: match PythonVersion::parse(&version.to_string()) {
                 Ok(v) => v,
                 Err(_) => continue,
