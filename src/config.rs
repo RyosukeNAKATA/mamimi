@@ -48,18 +48,6 @@ pub struct MamimiConfig {
     )]
     log_level: LogLevel,
 
-    /// Override the architecture of the installed Python binary.
-    /// Default to arch of mamimi binary.
-    #[clap(
-        long,
-        env = "MAMIMI_ARCH",
-        default_value_t,
-        global = true,
-        hide_env_values = true,
-        hide_default_value = true
-    )]
-    pub arch: Arch,
-
     /// A strategy for how to resolve the Python version.
     /// - `local`: use the local version of Python defined within the current directory
     #[clap(
@@ -80,7 +68,6 @@ impl Default for MamimiConfig {
             base_dir: None,
             multishell_path: None,
             log_level: LogLevel::default(),
-            arch: Arch::default(),
             version_file_strategy: VersionFileStrategy::default(),
         }
     }

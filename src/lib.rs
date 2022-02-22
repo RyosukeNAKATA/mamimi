@@ -7,7 +7,6 @@
 )]
 
 mod alias;
-mod arch;
 mod archive;
 mod cli;
 mod commands;
