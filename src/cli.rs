@@ -1,3 +1,4 @@
+use crate::commands::command::Command;
 use anyhow::Result;
 use clap::Parser;
 use std::path::PathBuf;
@@ -59,10 +60,4 @@ pub enum SubCommand {
         #[clap(short, long)]
         list: bool,
     },
-}
-
-#[derive(Parser)]
-struct Test {
-    #[clap(short)]
-    debug: bool,
 }
