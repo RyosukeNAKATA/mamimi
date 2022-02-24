@@ -1,15 +1,11 @@
 use crate::alias;
 use crate::config;
-use crate::lts::LtsType;
 use crate::system_version;
 use std::str::FromStr;
 
 #[derive(Debug, PartialEq, PartialOrd, Eq, Ord, Clone)]
 pub enum PythonVersion {
     Semver(semver::Version),
-    Lts(LtsType),
-    Alias(String),
-    Bypassed,
 }
 
 pub fn is_dotfile(dir: &std::fs::DirEntry) -> bool {
@@ -28,11 +24,6 @@ impl PythonVersion {
         let lowercased = version_str.as_ref().to_lowercase();
         if lowercased == system_version::display_name() {
             Ok(Self::Bypassed)
-        } else if lowercased.starts_with("lts-") || lowercased.starts_with("lts/") {
-            let lts_type = LtsType::from(&lowercased[4..]);
-        } else if first_letter_is_number(lowercased.trim_start_matches('v')) {
-            let version_plain = lowercased.trim_start_matches('v');
-            let sver = semver::Version::parse(version_plain)?;
         } else {
             Ok(Self::Alias(lowercased))
         }
@@ -62,9 +53,6 @@ impl PythonVersion {
 
     pub fn installation_path(&self, config: &crate::config::MamimiConfig) -> std::path::PathBuf {
         match self {
-            v @ (&Self::Lts(_) | &Self::Alias(_)) => {
-                config.aliases_dir().join(v.alias_name().unwrap())
-            }
             v @ Self::Semver(_) => config
                 .installations_dir()
                 .join(v.v_str())
