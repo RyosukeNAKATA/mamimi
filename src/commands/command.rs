@@ -1,14 +1,15 @@
 use crate::config::MamimiConfig;
 use crate::outln;
 use colored::Colorize;
-use dirs::config_dir;
 
-pub trait Command {
+pub trait Command: Sized {
     type Error: std::error::Error;
 
     fn apply(&self, config: &MamimiConfig) -> Result<(), Self::Error>;
+
     fn handle_error(err: Self::Error, config: &MamimiConfig) {
-        outln!(config #Error, "{} {}", "error:".red().bold(),format!("{}",err).red());
+        let err_s = format!("{}", err);
+        outln!(config, Error, "{} {}", "error:".red().bold(), err_s.red());
         std::process::exit(1);
     }
 
