@@ -28,17 +28,6 @@ mod lts_status {
     {
         Ok(LtsStatus::deserialize(deserializer)?.into())
     }
-
-    #[cfg(test)]
-    mod tests {
-        use super::*;
-
-        #[derive(Deserialize)]
-        struct TestSubject {
-            #[serde(deserialize_with = "deserialize")]
-            lts: Option<String>,
-        }
-    }
 }
 
 #[derive(Deserialize, Debug)]

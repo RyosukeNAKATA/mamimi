@@ -14,7 +14,6 @@ mod config;
 mod current_python_version;
 mod input_version;
 mod log_level;
-mod lts;
 mod path_ext;
 mod python_version;
 mod remote_python_index;
