@@ -1,3 +1,4 @@
+# This is developing! We are not able to use this apolication.
 
 # Mamimi is Python version manager
 This cli tool, Mamimi is a little bit fast and modern Python version manager written in Rust.

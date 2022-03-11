@@ -1,3 +1,4 @@
+use super::command::Command;
 use crate::shell::infer_shell;
 use crate::shell::Shell;
 use crate::symlink::create_symlink_dir;
@@ -15,7 +16,7 @@ pub enum MamimiError {
 
 pub struct Init {}
 
-impl crate::command::Command for Init {
+impl Command for Init {
     type Error = MamimiError;
 
     fn apply(&self, config: &crate::config::MamimiConfig) -> Result<(), Self::Error> {
@@ -51,6 +52,7 @@ impl crate::command::Command for Init {
 fn create_symlink(config: &crate::config::MamimiConfig) -> std::path::PathBuf {
     let system_temp_dir = std::env::temp_dir();
     let mut temp_dir = generate_symlink_path(&system_temp_dir);
+
     while temp_dir.exists() {
         temp_dir = generate_symlink_path(&system_temp_dir);
     }
