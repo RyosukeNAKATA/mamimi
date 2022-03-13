@@ -14,7 +14,12 @@ pub enum MamimiError {
     CantInferShell,
 }
 
-pub struct Init {}
+#[derive(clap::Parser, Debug, Default)]
+pub struct Init {
+    #[clap(long)]
+    #[clap(possible_values=AVAILABLE_SHELLS)]
+    shell: Option<Box<dyn Shell>>,
+}
 
 impl Command for Init {
     type Error = MamimiError;

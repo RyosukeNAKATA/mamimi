@@ -1,8 +1,9 @@
 #![cfg(unix)]
 
-use crate::shell::{Bash, Fish, Shell, Zsh};
+use crate::shell::Shell;
 use log::debug;
 use std::io::{Error, ErrorKind};
+use thiserror::Error;
 
 #[derive(Debug)]
 struct ProcessInfo {
@@ -24,13 +25,10 @@ pub fn infer_shell() -> Option<Box<dyn Shell>> {
             .split('/')
             .last()
             .expect("Can't read file name of process tree");
-        match binary {
-            "sh" | "bash" => return Some(Box::from(Bash)),
-            "zsh" => return Some(Box::from(Zsh)),
-            "fish" => return Some(Box::from(Fish)),
-            // "pwsh" => return Some(Box::from(PowerShell)),
-            cmd_name => debug!("binary is not a supported shell: {:?}", cmd_name),
-        };
+
+        if let Some(shell) = super::shell_from_string(binary) {
+            return Some(shell);
+        }
 
         pid = process_info.parent_pid;
         visited += 1;

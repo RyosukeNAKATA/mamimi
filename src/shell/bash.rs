@@ -1,4 +1,4 @@
-use crate::shell::Shell;
+use super::shell::Shell;
 use indoc::indoc;
 use std::path::Path;
 
@@ -6,6 +6,9 @@ use std::path::Path;
 pub struct Bash;
 
 impl Shell for Bash {
+    fn to_clap_shell(&self) -> clap_complete::Shell {
+        clap_complete::Shell::Bash
+    }
     fn path(&self, path: &Path) -> String {
         format!("export PATH={:?}:$PATH", path.to_str().unwrap())
     }
@@ -27,7 +30,4 @@ impl Shell for Bash {
         )
         .into()
     }
-    // fn as_clap_shell(&self) -> clap::Shell {
-    //     clap::Shell::Bash
-    // }
 }

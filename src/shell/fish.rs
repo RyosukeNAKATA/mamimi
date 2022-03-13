@@ -6,6 +6,9 @@ use std::path::Path;
 pub struct Fish;
 
 impl Shell for Fish {
+    fn to_clap_shell(&self) -> clap_complete::Shell {
+        clap_complete::Shell::Fish
+    }
     fn path(&self, path: &Path) -> String {
         format!("set -gx PATH {:?} $PATH;", path.to_str().unwrap())
     }
@@ -25,7 +28,4 @@ impl Shell for Fish {
         )
         .into()
     }
-    // fn as_clap_shell(&self) -> clap::Shell {
-    //     clap::Shell::Fish
-    // }
 }

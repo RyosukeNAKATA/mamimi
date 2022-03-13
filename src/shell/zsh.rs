@@ -6,6 +6,9 @@ use std::path::Path;
 pub struct Zsh;
 
 impl Shell for Zsh {
+    fn to_clap_shell(&self) -> clap_complete::Shell {
+        clap_complete::Shell::Zsh
+    }
     fn path(&self, path: &Path) -> String {
         format!("export PATH={:?}:$PATH", path.to_str().unwrap())
     }
@@ -28,8 +31,4 @@ impl Shell for Zsh {
         )
         .into()
     }
-
-    // fn as_clap_shell(&self) -> clap::Shell {
-    //     clap::Shell::Zsh
-    // }
 }

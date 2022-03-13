@@ -5,6 +5,9 @@ use std::path::Path;
 pub struct WindowsCommand;
 
 impl Shell for WindowsCommand {
+    fn to_clap_shell(&self) -> clap_complete::Shell {
+        panic!("Shell completion is not supported for Windows Command Promt. Could you try to use PowerShell for a better experience?");
+    }
     fn path(&self, path: &Path) -> String {
         let current_path = std::env::var_os("path").expect("Can't read Path env var");
         let mut split_paths: Vec<_> = std::env::split_paths(&current_path).collect();
@@ -21,14 +24,10 @@ impl Shell for WindowsCommand {
         let path = config.base_dir().join("cd.cmd");
         create_cd_file_at(&path).expect("Can't create cd.cmd file for use-on-cd");
         format!(
-            "doskey cd={} $1",
+            "doskey cd={} $*",
             path.to_str().expect("Cant't read path to cd.cmd")
         )
     }
-
-    // fn as_clap_shell(&self) -> clap::Shell {
-    //     panic!("Shell completion is not supported for Windows Commnad Promt. Maybe try useing PowerShell for a better experience ?");
-    // }
 }
 
 fn create_cd_file_at(path: &std::path::Path) -> std::io::Result<()> {
