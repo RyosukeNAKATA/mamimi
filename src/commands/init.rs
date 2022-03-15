@@ -1,7 +1,12 @@
 use super::command::Command;
-use crate::shell::infer_shell;
-use crate::shell::Shell;
+use crate::config::MamimiConfig;
+use crate::directories;
+use crate::outln;
+use crate::path_ext::PathExt;
+use crate::shell::{infer_shell, Shell, AVAILABLE_SHELLS};
 use crate::symlink::create_symlink_dir;
+use colored::Colorize;
+use std::fmt::Debug;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -16,9 +21,16 @@ pub enum MamimiError {
 
 #[derive(clap::Parser, Debug, Default)]
 pub struct Init {
+    /// The shell syntax to use. Infers when missing.
     #[clap(long)]
     #[clap(possible_values=AVAILABLE_SHELLS)]
     shell: Option<Box<dyn Shell>>,
+    /// Deprecated. This is the default now.
+    #[clap(long, hide = true)]
+    multi: bool,
+    /// Print the script to change Node versions every directory change
+    #[clap(long)]
+    use_on_cd: bool,
 }
 
 impl Command for Init {
@@ -54,6 +66,15 @@ impl Command for Init {
     }
 }
 
+fn generate_symlink_path(root: &std::path::Path) -> std::path::PathBuf {
+    let temp_dir_name = format!(
+        "mamimi_{}_{}",
+        std::process::id(),
+        chrono::Utc::now().timestamp_millis()
+    );
+    root.join(temp_dir_name)
+}
+
 fn create_symlink(config: &crate::config::MamimiConfig) -> std::path::PathBuf {
     let system_temp_dir = std::env::temp_dir();
     let mut temp_dir = generate_symlink_path(&system_temp_dir);
@@ -65,13 +86,4 @@ fn create_symlink(config: &crate::config::MamimiConfig) -> std::path::PathBuf {
     create_symlink_dir(config.default_python_version_dir(), &temp_dir)
         .expect("Can't create symlink");
     temp_dir
-}
-
-fn generate_symlink_path(root: &std::path::Path) -> std::path::PathBuf {
-    let temp_dir_name = format!(
-        "mamimi_{}_{}",
-        std::process::id(),
-        chrono::Utc::now().timestamp_millis()
-    );
-    root.join(temp_dir_name)
 }

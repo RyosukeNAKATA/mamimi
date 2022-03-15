@@ -10,6 +10,7 @@ mod shell;
 
 pub use bash::Bash;
 pub use fish::Fish;
+pub use infer::infer_shell;
 pub use powershell::PowerShell;
 pub use shell::{Shell, AVAILABLE_SHELLS};
 pub use windows_command::WindowsCommand;
