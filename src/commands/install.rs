@@ -1,3 +1,4 @@
+use super::command::Command;
 use crate::alias::create_alias;
 use crate::archive::{self, extract::Error as ExtractError, extract::Extract};
 use crate::config::MamimiConfig;
@@ -51,7 +52,7 @@ pub struct Install {
     pub version: Option<InputVersion>,
     pub configure_opts: Vec<String>,
 }
-impl crate::command::Command for Install {
+impl Command for Install {
     type Error = MamimiError;
     fn apply(&self, config: &MamimiConfig) -> Result<(), Self::Error> {
         let current_version = self

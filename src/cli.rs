@@ -1,63 +1,57 @@
+use crate::commands;
 use crate::commands::command::Command;
-use anyhow::Result;
+use crate::config::MamimiConfig;
 use clap::Parser;
-use std::path::PathBuf;
 
-#[derive(clap::Parser)]
-#[clap(
-    name = "Mamimi",
-    version = "0.0.1",
-    author = "Ryosuke",
-    about = "A cool Python version manager written in Rust"
-)]
-pub struct Opts {
-    #[clap(short, long)]
-    verbose: bool,
-    /// The root directory of mamimi  installations [default: $HOME/.mamimi]
-    #[clap(name = "base-dir", long = "mamimi-dir")]
-    take_vale: bool,
+/// Blazingly falt python manager
+#[derive(clap::Parser, Debug, Parser, Debug)]
+#[clap(name="mamimi",version=env!("CARGO_PKG_VERSION"),bin_name="mamimi")]
+pub struct Cli {
+    #[clap(flatten)]
+    pub config: MamimiConfig,
     #[clap(subcommand)]
-    subcmd: SubCommand,
+    pub subcmd: SubCommand,
 }
 
-#[derive(Parser)]
+#[derive(clap::Parser, Debug)]
 pub enum SubCommand {
     /// Sets environment variables for initializing mamimi
     #[clap(name = "init")]
-    Init,
+    Init(commands::init::Init),
     /// Installs a specific Python version
     #[clap(name = "install")]
-    Install {
-        /// Lists Python versions avalable to install
-        #[clap(short, long)]
-        list: bool,
-        /// Options passed to ./configure
-        #[clap(name = "version")]
-        python_version: String,
-    },
+    Install(commands::install::Install),
     /// Uninstall a specific Python version
-    #[clap(name = "uninstall")]
-    Uninstall {
-        #[clap(name = "version")]
-        python_version: String,
-    },
+    #[clap(name = "uninstall", bin_name = "uninstall")]
+    Uninstall(commands::uninstall::Uninstall),
     /// Lists installed Python version
     #[clap(name = "versions")]
-    Versions,
+    Versions(commands::versions::Versions),
     /// Sets the current Python version
     #[clap(name = "local")]
-    Local,
+    Local(commands::local::Local),
     /// Sets the global Python version
     #[clap(name = "global")]
-    Global,
+    Global(commands::global::Global),
     /// Print shell completions to stdout
     #[clap(name = "completions")]
-    Completions {
-        /// The shell syntax to use
-        #[clap(short, long)]
-        shell: String,
-        /// Lists installed Python versions
-        #[clap(short, long)]
-        list: bool,
-    },
+    Completions(commands::completions::Completions),
+}
+
+impl SubCommand {
+    pub fn call(self, config: MamimiConfig) {
+        match self {
+            Self::Init(cmd) => cmd.call(&config),
+            Self::Install(cmd) => cmd.call(config),
+            Self::Uninstall(cmd) => cmd.call(config),
+            Self::Versions(cmd) => cmd.call(config),
+            Self::Local(cmd) => cmd.call(config),
+            Self::Global(cmd) => cmd.call(config),
+            Self::Completions(cmd) => cmd.call(&config),
+        }
+    }
+}
+
+pub fn parse() -> Cli {
+    Cli::parse()
 }

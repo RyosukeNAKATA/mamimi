@@ -22,7 +22,7 @@ pub struct Local {
     pub version: Option<InputVersion>,
 }
 
-impl crate::command::Command for Local {
+impl crate::commands::Command for Local {
     type Error = MamimiError;
 
     fn apply(&self, config: &crate::config::MamimiConfig) -> Result<(), Self::Error> {

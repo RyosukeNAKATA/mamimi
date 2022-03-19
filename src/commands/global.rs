@@ -1,3 +1,4 @@
+use super::command::Command;
 use crate::alias::create_alias;
 use crate::commands::versions;
 use crate::input_version::InputVersion;
@@ -20,7 +21,7 @@ pub struct Global {
     pub version: InputVersion,
 }
 
-impl crate::command::Command for Global {
+impl Command for Global {
     type Error = MamimiError;
     fn apply(&self, config: &crate::config::MamimiConfig) -> Result<(), Self::Error> {
         debug!("Use {} as the default version", &self.version);
