@@ -1,8 +1,6 @@
 use super::command::Command;
 use crate::config::MamimiConfig;
-use crate::directories;
 use crate::outln;
-use crate::path_ext::PathExt;
 use crate::shell::{infer_shell, Shell, AVAILABLE_SHELLS};
 use crate::symlink::create_symlink_dir;
 use colored::Colorize;
@@ -36,7 +34,16 @@ pub struct Init {
 impl Command for Init {
     type Error = MamimiError;
 
-    fn apply(&self, config: &crate::config::MamimiConfig) -> Result<(), Self::Error> {
+    fn apply(&self, config: &MamimiConfig) -> Result<(), Self::Error> {
+        if self.multi {
+            outln!(
+                config,
+                Error,
+                "{} {} is deprecated. This is now the default.",
+                "warning:".yellow().bold(),
+                "--multi".italic()
+            );
+        }
         let shell: Box<dyn Shell> = infer_shell().ok_or(MamimiError::CantInferShell)?;
         let mamimi_path = create_symlink(&config);
         let binary_path = if cfg!(windows) {
@@ -47,21 +54,40 @@ impl Command for Init {
         println!("{}", shell.path(&binary_path));
         println!(
             "{}",
+            shell.set_env_var(
+                "MAMIMI_PYTHON_FTP_MIRROR",
+                config.python_ftp_mirror.as_str()
+            )
+        );
+        println!(
+            "{}",
+            shell.set_env_var(
+                "MAMIMI_DIR",
+                config.base_dir_with_default().to_str().unwrap()
+            )
+        );
+        println!(
+            "{}",
             shell.set_env_var("MAMIMI_MULTISHELL_PATH", mamimi_path.to_str().unwrap())
         );
         println!(
             "{}",
-            shell.set_env_var("MAMIMI_DIR", config.base_dir().to_str().unwrap())
+            shell.set_env_var("MAMIMI_LOGLEVEL", config.log_level().clone().into())
         );
         println!(
             "{}",
-            shell.set_env_var("MAMIMI_LOGLEVEL", config.log_level.clone().into())
+            shell.set_env_var(
+                "MAMIMI_VERSION_FILE_STRATEGY",
+                config.version_file_strategy().as_str()
+            )
         );
-        //println!(
-        //    "{}",
-        //    shell.set_env_var("MAMIMI_PYTHON_BUILD_MIRROR", config.python_mirror.as_str())
-        //);
-        println!("{}", shell.use_on_cd(&config));
+
+        if self.use_on_cd {
+            println!("{}", shell.use_on_cd(&config));
+        }
+        if let Some(v) = shell.rehash() {
+            println!("{}", v);
+        }
         Ok(())
     }
 }
@@ -86,4 +112,24 @@ fn create_symlink(config: &crate::config::MamimiConfig) -> std::path::PathBuf {
     create_symlink_dir(config.default_python_version_dir(), &temp_dir)
         .expect("Can't create symlink");
     temp_dir
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_smoke() {
+        use crate::shell;
+        let config: MamimiConfig = MamimiConfig::default();
+        let shell: Box<dyn Shell> = if cfg!(windows) {
+            Box::from(shell::WindowsCommand)
+        } else {
+            Box::from(shell::Bash)
+        };
+        Init {
+            shell: Some(shell),
+            ..Init::default()
+        }
+        .call(config);
+    }
 }
