@@ -130,6 +130,6 @@ mod tests {
             shell: Some(shell),
             ..Init::default()
         }
-        .call(config);
+        .call(&config);
     }
 }
