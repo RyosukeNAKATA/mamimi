@@ -4,7 +4,7 @@ use crate::config::MamimiConfig;
 use crate::python_version::PythonVersion;
 use crate::system_version;
 
-pub fn current_version(config: &MamimiConfig) -> Result<Option<PythonVersion>, Error> {
+pub fn current_python_version(config: &MamimiConfig) -> Result<Option<PythonVersion>, Error> {
     let multishell_path = config.multishell_path().ok_or(Error::EnvNotApplied)?;
 
     if multishell_path.read_link().ok() == Some(system_version::path()) {

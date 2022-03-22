@@ -1,11 +1,11 @@
-use super::command::Command;
 use crate::alias::create_alias;
 use crate::archive::{self, extract::Error as ExtractError, extract::Extract};
 use crate::config::MamimiConfig;
+use crate::current_python_version::current_python_version;
 use crate::input_version::InputVersion;
-use crate::python_version::{current_python_version, PythonVersion};
-use crate::version_file::get_user_version_for_directory;
-use crate::{command, outln};
+use crate::outln;
+use crate::python_version::PythonVersion;
+use crate::version_files::get_user_version_for_directory;
 use anyhow::Result;
 use colored::Colorize;
 use dirs::config_dir;
@@ -16,7 +16,6 @@ use std::env::current_dir;
 use std::error;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 use tempfile;
 use thiserror::Error;
 
@@ -48,12 +47,15 @@ pub enum MamimiError {
     CannotBuildPython { stderr: String },
 }
 
+#[derive(clap::Parser, Debug, Default)]
 pub struct Install {
     pub version: Option<InputVersion>,
     pub configure_opts: Vec<String>,
 }
-impl Command for Install {
+
+impl super::command::Command for Install {
     type Error = MamimiError;
+
     fn apply(&self, config: &MamimiConfig) -> Result<(), Self::Error> {
         let current_version = self
             .version
@@ -91,7 +93,13 @@ impl Command for Install {
         }
 
         let url = package_url(&version);
-        outln!(config #Info, "{} Downloading {}","==>".green(),format!("{}",url).green());
+        outln!(
+            config,
+            Error,
+            "{} Downloading {}",
+            "==>".green(),
+            format!("{}", url).green()
+        );
         let response = reqwest::blocking::get(url)?;
         if response.status() == 404 {
             return Err(MamimiError::VersionNotFound {
@@ -99,14 +107,26 @@ impl Command for Install {
             });
         }
 
-        outln!(config #Info, "{} Extracting {}","==>".green(),format!("{}", url).green());
+        outln!(
+            config,
+            Error,
+            "{} Extracting {}",
+            "==>".green(),
+            format!("{}", url).green()
+        );
         let tmp_installations_dir = installations_dir.join(".downloads");
         std::fs::create_dir_all(&tmp_installations_dir).map_err(MamimiError::IoError)?;
         let tmp_dir = tempfile::TempDir::new_in(&tmp_installations_dir)
             .expect("Cannot generate a temp directory");
         extract_archive_into(&tmp_dir, response)?;
 
-        outln!(config #Info,"{} Building {}","==>".green(),format!("Python {}",current_version).green());
+        outln!(
+            config,
+            Error,
+            "{} Building {}",
+            "==>".green(),
+            format!("Python {}", current_version).green()
+        );
         let installed_directory = std::fs::read_dir(&tmp_dir)
             .map_err(MamimiError::IoError)?
             .next()
@@ -164,7 +184,7 @@ fn archive(version: &PythonVersion) -> String {
 fn openssl_dir() -> Result<String, MamimiError> {
     #[cfg(target_os = "macos")]
     return Ok(String::from_utf8_lossy(
-        &Command::new("brew")
+        &super::command::Command::new("brew")
             .arg("--prefix")
             .arg("openssl@1.1")
             .output()
@@ -183,7 +203,7 @@ fn build_package(
     configure_opts: &[String],
 ) -> Result<(), MamimiError> {
     debug!("./configure {}", configure_opts.join(" "));
-    let mut command = Command::new("sh");
+    let mut command = super::command::Command::new("sh");
     command
         .arg("configure")
         .arg(format!("--prefix={}", installed_dir.to_str().unwrap()))
@@ -210,7 +230,7 @@ fn build_package(
         });
     };
     debug!("make -j {}", num_cpus::get().to_string());
-    let make = Command::new("make")
+    let make = super::command::Command::new("make")
         .arg("-j")
         .arg(num_cpus::get().to_string())
         .current_dir(&current_dir)
@@ -225,4 +245,63 @@ fn build_package(
         });
     };
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::commands::command::Command;
+    use crate::config::MamimiConfig;
+    use crate::python_version::PythonVersion;
+    use itertools::Itertools;
+    use tempfile::tempdir;
+
+    #[test]
+    fn test_install_second_version() {
+        let config = MamimiConfig {
+            base_dir: Some(tempdir().unwrap().path().to_path_buf()),
+            ..Default::default()
+        };
+
+        Install {
+            version: Some(InputVersion::Full(PythonVersion::Semver("3.8.7").unwrap())),
+            configure_opts: vec![],
+        }
+        .apply(&config)
+        .expect("Can't install Python3.8.7");
+
+        assert_eq!(
+            std::fs::read_link(&config.default_python_version_dir())
+                .unwrap()
+                .components()
+                .last(),
+            Some(std::path::Component::Normal(std::ffi::OsStr::new("3.9.6")))
+        );
+    }
+
+    #[test]
+    fn test_install_default_python_version() {
+        let config = MamimiConfig {
+            base_dir: Some(tempdir().unwrap().path().to_path_buf()),
+            ..Default::default()
+        };
+
+        Install {
+            version: Some(InputVersion::Full(PythonVersion::Semver(
+                semver::Version::parse("3.8.7").unwrap(),
+            ))),
+            configure_opts: vec![],
+        }
+        .apply(&config)
+        .expect("Can't insatll");
+
+        assert!(config.installations_dir().join("3.8.7").exists());
+        assert!(config
+            .installations_dir()
+            .join("3.8.7")
+            .join("bin")
+            .join("python3")
+            .exists());
+        assert!(config.default_python_version_dir().exists());
+    }
 }
