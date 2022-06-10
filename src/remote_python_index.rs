@@ -3,40 +3,11 @@ use scraper;
 use serde::Deserialize;
 use url::Url;
 
-mod lts_status {
-    use serde::{Deserialize, Deserializer};
-
-    #[derive(Deserialize, Debug, PartialEq, Eq)]
-    #[serde(untagged)]
-    enum LtsStatus {
-        Nope(bool),
-        Yes(String),
-    }
-
-    impl From<LtsStatus> for Option<String> {
-        fn from(status: LtsStatus) -> Self {
-            match status {
-                LtsStatus::Nope(_) => None,
-                LtsStatus::Yes(x) => Some(x),
-            }
-        }
-    }
-
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        Ok(LtsStatus::deserialize(deserializer)?.into())
-    }
-}
-
 #[derive(Deserialize, Debug)]
 pub struct IndexedPythonVersion {
     /// https://npm.taobao.org/mirrors/python/ mirror
     pub python_version: PythonVersion,
-    #[serde(with = "lts_status")]
-    pub lts: Option<String>,
-    pub files: Vec<String>,
+    pub url: Url,
 }
 
 pub fn list() -> Result<Vec<IndexedPythonVersion>, reqwest::Error> {
@@ -54,12 +25,17 @@ pub fn list() -> Result<Vec<IndexedPythonVersion>, reqwest::Error> {
         }
         let mut version = node.inner_html();
         version.retain(|c| c != '/');
-        versions.push(IndexedPythonVersion {
-            python_version: match PythonVersion::parse(&version.to_string()) {
-                Ok(v) => v,
-                Err(_) => continue,
-            },
-        })
+        match PythonVersion::parse(&version.to_string()) {
+            Ok(v) => versions.push(IndexedPythonVersion {
+                python_version: v,
+                url: Url::parse(&format!(
+                    "https://www.python.org/ftp/python/{}",
+                    v.to_string()
+                ))
+                .unwrap(),
+            }),
+            Err(_) => continue,
+        }
     }
     versions.sort_by(|a, b| a.python_version.cmp(&b.python_version));
     Ok(versions)

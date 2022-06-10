@@ -43,7 +43,7 @@ impl SubCommand {
         match self {
             Self::Init(cmd) => cmd.call(&config),
             Self::Install(cmd) => cmd.call(&config),
-            Self::Uninstall(cmd) => cmd.call(config),
+            Self::Uninstall(cmd) => cmd.call(&config),
             Self::Versions(cmd) => cmd.call(config),
             Self::Local(cmd) => cmd.call(config),
             Self::Global(cmd) => cmd.call(&config),

@@ -1,4 +1,4 @@
-#![warn(rust_2021_idioms, clippy::all, clippy::pedantic)]
+#![warn(clippy::all, clippy::pedantic)]
 #![allow(
     clippy::enum_variant_names,
     clippy::large_enum_variant,
