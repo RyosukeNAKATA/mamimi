@@ -26,7 +26,7 @@ impl crate::commands::command::Command for Local {
     type Error = MamimiError;
 
     fn apply(&self, config: &crate::config::MamimiConfig) -> Result<(), Self::Error> {
-        debug!("log level {:?}", config.log_level);
+        debug!("log level {:?}", config.log_level());
         let current_python_version = match self.version.clone().ok_or_else(|| {
             match get_user_version_for_directory(std::env::current_dir().unwrap()) {
                 Some(version) => Ok(version),
@@ -47,7 +47,7 @@ impl crate::commands::command::Command for Local {
         };
         debug!("Use {} as the current version", current_python_version);
         if !&config
-            .python_versions_dir()
+            .versions_dir()
             .join(current_python_version.to_string())
             .exists()
         {
@@ -57,7 +57,7 @@ impl crate::commands::command::Command for Local {
         }
         replace_symlink(
             &config
-                .python_versions_dir()
+                .versions_dir()
                 .join(current_python_version.to_string()),
             &config
                 .mamimi_path

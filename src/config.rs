@@ -34,7 +34,7 @@ pub struct MamimiConfig {
         hide_env_values = true,
         hide = true
     )]
-    multishell_path: Option<PathBuf>,
+    pub mamimi_path: Option<PathBuf>,
 
     /// The log level of mamimi commands
     #[clap(
@@ -65,7 +65,7 @@ impl Default for MamimiConfig {
         Self {
             python_ftp_mirror: Url::parse("https://www.python.org/ftp/python/").unwrap(),
             base_dir: None,
-            multishell_path: None,
+            mamimi_path: None,
             log_level: LogLevel::Info,
             version_file_strategy: VersionFileStrategy::default(),
         }
@@ -78,7 +78,7 @@ impl MamimiConfig {
     }
 
     pub fn multishell_path(&self) -> Option<&std::path::Path> {
-        match &self.multishell_path {
+        match &self.mamimi_path {
             None => None,
             Some(v) => Some(v.as_path()),
         }
