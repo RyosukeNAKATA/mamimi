@@ -1,13 +1,12 @@
 use crate::python_version::PythonVersion;
 use scraper;
 use serde::Deserialize;
-use url::Url;
 
 #[derive(Deserialize, Debug)]
 pub struct IndexedPythonVersion {
     /// https://npm.taobao.org/mirrors/python/ mirror
     pub python_version: PythonVersion,
-    pub url: Url,
+    pub url: String,
 }
 
 pub fn list() -> Result<Vec<IndexedPythonVersion>, reqwest::Error> {
@@ -28,11 +27,7 @@ pub fn list() -> Result<Vec<IndexedPythonVersion>, reqwest::Error> {
         match PythonVersion::parse(&version.to_string()) {
             Ok(v) => versions.push(IndexedPythonVersion {
                 python_version: v,
-                url: Url::parse(&format!(
-                    "https://www.python.org/ftp/python/{}",
-                    v.to_string()
-                ))
-                .unwrap(),
+                url: format!("https://www.python.org/ftp/python/{}", v.to_string()),
             }),
             Err(_) => continue,
         }

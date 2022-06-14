@@ -13,7 +13,7 @@ pub enum MamimiError {
 
 pub struct InstallList {}
 
-impl crate::command::Command for InstallList {
+impl crate::commands::command::Command for InstallList {
     type Error = MamimiError;
 
     fn apply(&self, config: &crate::config::MamimiConfig) -> Result<(), MamimiError> {
@@ -24,7 +24,7 @@ impl crate::command::Command for InstallList {
             .sorted()
             .dedup();
         for version in versions {
-            crate::outln!(config #Info, "{}", version);
+            crate::outln!(config, Error, "{}", version);
         }
         Ok(())
     }

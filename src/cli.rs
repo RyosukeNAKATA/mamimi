@@ -4,7 +4,7 @@ use crate::config::MamimiConfig;
 use clap::Parser;
 
 /// Blazingly falt python manager
-#[derive(clap::Parser, Debug, Parser, Debug)]
+#[derive(clap::Parser, Debug)]
 #[clap(name="mamimi",version=env!("CARGO_PKG_VERSION"),bin_name="mamimi")]
 pub struct Cli {
     #[clap(flatten)]
@@ -44,8 +44,8 @@ impl SubCommand {
             Self::Init(cmd) => cmd.call(&config),
             Self::Install(cmd) => cmd.call(&config),
             Self::Uninstall(cmd) => cmd.call(&config),
-            Self::Versions(cmd) => cmd.call(config),
-            Self::Local(cmd) => cmd.call(config),
+            Self::Versions(cmd) => cmd.call(&config),
+            Self::Local(cmd) => cmd.call(&config),
             Self::Global(cmd) => cmd.call(&config),
             Self::Completions(cmd) => cmd.call(&config),
         }
