@@ -1,6 +1,7 @@
 use crate::config::MamimiConfig;
 use crate::outln;
-use crate::python_version::{current_python_version, PythonVersion};
+use crate::python_version::PythonVersion;
+use crate::current_python_version::current_python_version;
 use colored::Colorize;
 use log::debug;
 use thiserror::Error;
