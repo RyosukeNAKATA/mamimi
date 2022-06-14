@@ -3,7 +3,7 @@ use crate::commands::command::Command;
 use crate::config::MamimiConfig;
 use clap::Parser;
 
-/// Blazingly falt python manager
+/// Blazingly fast python manager
 #[derive(clap::Parser, Debug)]
 #[clap(name="mamimi",version=env!("CARGO_PKG_VERSION"),bin_name="mamimi")]
 pub struct Cli {
