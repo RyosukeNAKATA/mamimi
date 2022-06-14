@@ -22,7 +22,11 @@ impl crate::commands::command::Command for Versions {
     type Error = MamimiError;
 
     fn apply(&self, config: &MamimiConfig) -> Result<(), Self::Error> {
-        for entry in config.versions().read_dir().map_err(MamimiError::IoError)? {
+        for entry in config
+            .versions_dir()
+            .read_dir()
+            .map_err(MamimiError::IoError)?
+        {
             let entry = entry.map_err(MamimiError::IoError)?;
             if crate::python_version::is_dotfile(&entry) {
                 continue;

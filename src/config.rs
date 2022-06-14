@@ -124,6 +124,11 @@ impl MamimiConfig {
             .join("aliases")
             .ensure_exists_silently()
     }
+    pub fn versions_dir(&self) -> PathBuf {
+        self.base_dir_with_default()
+            .join("versions")
+            .ensure_exists_silently()
+    }
 
     #[cfg(test)]
     pub fn with_base_dir(mut self, base_dir: Option<PathBuf>) -> Self {

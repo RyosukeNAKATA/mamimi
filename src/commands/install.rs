@@ -16,6 +16,7 @@ use std::env::current_dir;
 use std::error;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 use tempfile;
 use thiserror::Error;
 
@@ -53,7 +54,7 @@ pub struct Install {
     pub configure_opts: Vec<String>,
 }
 
-impl super::command::Command for Install {
+impl crate::commands::command::Command for Install {
     type Error = MamimiError;
 
     fn apply(&self, config: &MamimiConfig) -> Result<(), Self::Error> {
@@ -83,7 +84,7 @@ impl super::command::Command for Install {
                     .clone()
             }
         };
-        let installations_dir = config.python_versions_dir();
+        let installations_dir = config.versions_dir();
         let installation_dir = PathBuf::from(&installations_dir).join(version.to_string());
 
         if installation_dir.exists() {
@@ -184,7 +185,7 @@ fn archive(version: &PythonVersion) -> String {
 fn openssl_dir() -> Result<String, MamimiError> {
     #[cfg(target_os = "macos")]
     return Ok(String::from_utf8_lossy(
-        &super::command::Command::new("brew")
+        &Command::new("brew")
             .arg("--prefix")
             .arg("openssl@1.1")
             .output()
@@ -203,7 +204,7 @@ fn build_package(
     configure_opts: &[String],
 ) -> Result<(), MamimiError> {
     debug!("./configure {}", configure_opts.join(" "));
-    let mut command = super::command::Command::new("sh");
+    let mut command = Command::new("sh");
     command
         .arg("configure")
         .arg(format!("--prefix={}", installed_dir.to_str().unwrap()))
@@ -230,7 +231,7 @@ fn build_package(
         });
     };
     debug!("make -j {}", num_cpus::get().to_string());
-    let make = super::command::Command::new("make")
+    let make = Command::new("make")
         .arg("-j")
         .arg(num_cpus::get().to_string())
         .current_dir(&current_dir)
@@ -264,7 +265,7 @@ mod tests {
         };
 
         Install {
-            version: Some(InputVersion::Full(PythonVersion::Semver("3.8.7").unwrap())),
+            version: Some(InputVersion::Full(PythonVersion::Semver(semver::Version::parse("3.8.7").unwrap()))),
             configure_opts: vec![],
         }
         .apply(&config)
