@@ -26,7 +26,7 @@ pub fn list() -> Result<Vec<IndexedPythonVersion>, reqwest::Error> {
         version.retain(|c| c != '/');
         match PythonVersion::parse(&version.to_string()) {
             Ok(v) => versions.push(IndexedPythonVersion {
-                python_version: v,
+                python_version: v.clone(),
                 url: format!("https://www.python.org/ftp/python/{}", v.to_string()),
             }),
             Err(_) => continue,

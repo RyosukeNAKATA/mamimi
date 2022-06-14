@@ -22,7 +22,7 @@ pub struct Versions {}
 impl crate::commands::command::Command for Versions {
     type Error = MamimiError;
 
-    fn apply(&self, config: &MamimiConfig) -> Result<(), Self::Error> {
+    fn apply(self, config: &MamimiConfig) -> Result<(), Self::Error> {
         for entry in config
             .versions_dir()
             .read_dir()

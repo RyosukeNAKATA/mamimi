@@ -57,7 +57,7 @@ pub struct Install {
 impl crate::commands::command::Command for Install {
     type Error = MamimiError;
 
-    fn apply(&self, config: &MamimiConfig) -> Result<(), Self::Error> {
+    fn apply(self, config: &MamimiConfig) -> Result<(), Self::Error> {
         let current_version = self
             .version
             .clone()
@@ -101,7 +101,7 @@ impl crate::commands::command::Command for Install {
             "==>".green(),
             format!("{}", url).green()
         );
-        let response = reqwest::blocking::get(url)?;
+        let response = reqwest::blocking::get(url.clone())?;
         if response.status() == 404 {
             return Err(MamimiError::VersionNotFound {
                 version: current_version,
@@ -259,17 +259,17 @@ mod tests {
 
     #[test]
     fn test_install_second_version() {
-        let config = MamimiConfig {
-            base_dir: Some(tempdir().unwrap().path().to_path_buf()),
-            ..Default::default()
-        };
+        let base_dir = tempfile::tempdir().unwrap();
+        let config = MamimiConfig::default().with_base_dir(Some(base_dir.path().to_path_buf()));
 
         Install {
-            version: Some(InputVersion::Full(PythonVersion::Semver(semver::Version::parse("3.8.7").unwrap()))),
+            version: Some(InputVersion::Full(PythonVersion::Semver(
+                semver::Version::parse("3.9.6").unwrap(),
+            ))),
             configure_opts: vec![],
         }
         .apply(&config)
-        .expect("Can't install Python3.8.7");
+        .expect("Can't install Python3.9.6");
 
         assert_eq!(
             std::fs::read_link(&config.default_python_version_dir())
@@ -282,24 +282,22 @@ mod tests {
 
     #[test]
     fn test_install_default_python_version() {
-        let config = MamimiConfig {
-            base_dir: Some(tempdir().unwrap().path().to_path_buf()),
-            ..Default::default()
-        };
+        let base_dir = tempfile::tempdir().unwrap();
+        let config = MamimiConfig::default().with_base_dir(Some(base_dir.path().to_path_buf()));
 
         Install {
             version: Some(InputVersion::Full(PythonVersion::Semver(
-                semver::Version::parse("3.8.7").unwrap(),
+                semver::Version::parse("3.9.6").unwrap(),
             ))),
             configure_opts: vec![],
         }
         .apply(&config)
         .expect("Can't insatll");
 
-        assert!(config.installations_dir().join("3.8.7").exists());
+        assert!(config.installations_dir().join("3.9.6").exists());
         assert!(config
             .installations_dir()
-            .join("3.8.7")
+            .join("3.9.6")
             .join("bin")
             .join("python3")
             .exists());

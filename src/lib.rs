@@ -6,23 +6,23 @@
     clippy::similar_names
 )]
 
-mod alias;
-mod archive;
-mod cli;
-mod commands;
-mod config;
-mod current_python_version;
-mod input_version;
-mod log_level;
-mod path_ext;
-mod python_version;
-mod remote_python_index;
-mod shell;
-mod symlink;
-mod system_info;
-mod system_version;
-mod version_file_strategy;
-mod version_files;
+pub mod alias;
+pub mod archive;
+pub mod cli;
+pub mod commands;
+pub mod config;
+pub mod current_python_version;
+pub mod input_version;
+pub mod log_level;
+pub mod path_ext;
+pub mod python_version;
+pub mod remote_python_index;
+pub mod shell;
+pub mod symlink;
+pub mod system_info;
+pub mod system_version;
+pub mod version_file_strategy;
+pub mod version_files;
 
 #[macro_use]
-mod directories;
+pub mod directories;

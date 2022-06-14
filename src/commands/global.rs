@@ -24,7 +24,7 @@ pub struct Global {
 
 impl Command for Global {
     type Error = MamimiError;
-    fn apply(&self, config: &crate::config::MamimiConfig) -> Result<(), Self::Error> {
+    fn apply(self, config: &crate::config::MamimiConfig) -> Result<(), Self::Error> {
         debug!("Use {} as the default version", &self.version);
         let version = match self.version.clone() {
             InputVersion::Full(PythonVersion::Semver(v)) => PythonVersion::Semver(v),

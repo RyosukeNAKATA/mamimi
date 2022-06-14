@@ -34,7 +34,7 @@ pub struct Uninstall {
 impl crate::commands::command::Command for Uninstall {
     type Error = MamimiError;
 
-    fn apply(&self, config: &MamimiConfig) -> Result<(), Self::Error> {
+    fn apply(self, config: &MamimiConfig) -> Result<(), Self::Error> {
         let current_version = self.version.clone();
         let version = match current_version.clone() {
             InputVersion::Full(PythonVersion::Semver(v)) => PythonVersion::Semver(v),

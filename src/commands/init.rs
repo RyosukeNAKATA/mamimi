@@ -21,7 +21,7 @@ pub enum MamimiError {
 pub struct Init {
     /// The shell syntax to use. Infers when missing.
     #[clap(long)]
-    #[clap(possible_values=AVAILABLE_SHELLS)]
+    #[clap(possible_values = AVAILABLE_SHELLS)]
     shell: Option<Box<dyn Shell>>,
     /// Deprecated. This is the default now.
     #[clap(long, hide = true)]
@@ -34,7 +34,7 @@ pub struct Init {
 impl Command for Init {
     type Error = MamimiError;
 
-    fn apply(&self, config: &MamimiConfig) -> Result<(), Self::Error> {
+    fn apply(self, config: &MamimiConfig) -> Result<(), Self::Error> {
         if self.multi {
             outln!(
                 config,
@@ -85,7 +85,7 @@ impl Command for Init {
             )
         );
         if self.use_on_cd {
-            println!("{}", shell.use_on_cd(&config));
+            println!("{}", shell.use_on_cd(config));
         }
         if let Some(v) = shell.rehash() {
             println!("{}", v);

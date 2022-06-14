@@ -16,7 +16,7 @@ pub struct Completions {
 impl Command for Completions {
     type Error = Error;
 
-    fn apply(&self, _config: &MamimiConfig) -> Result<(), Self::Error> {
+    fn apply(self, _config: &MamimiConfig) -> Result<(), Self::Error> {
         let mut stdio = std::io::stdout();
         let shell = self
             .shell

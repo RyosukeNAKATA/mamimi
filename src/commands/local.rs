@@ -26,7 +26,7 @@ pub struct Local {
 impl crate::commands::command::Command for Local {
     type Error = MamimiError;
 
-    fn apply(&self, config: &crate::config::MamimiConfig) -> Result<(), Self::Error> {
+    fn apply(self, config: &crate::config::MamimiConfig) -> Result<(), Self::Error> {
         debug!("log level {:?}", config.log_level());
         let current_python_version = match self.version.clone().ok_or_else(|| {
             match get_user_version_for_directory(std::env::current_dir().unwrap()) {
