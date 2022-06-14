@@ -44,14 +44,17 @@ impl Command for Init {
                 "--multi".italic()
             );
         }
-        let shell: Box<dyn Shell> = infer_shell().ok_or(MamimiError::CantInferShell)?;
+        let shell: Box<dyn Shell> = self
+            .shell
+            .or_else(&infer_shell)
+            .ok_or(MamimiError::CantInferShell)?;
         let mamimi_path = create_symlink(&config);
         let binary_path = if cfg!(windows) {
             mamimi_path.clone()
         } else {
             mamimi_path.join("bin")
         };
-        println!("{}", shell.path(&binary_path));
+        println!("{:?}", shell.path(&binary_path));
         println!(
             "{}",
             shell.set_env_var(
@@ -81,7 +84,6 @@ impl Command for Init {
                 config.version_file_strategy().as_str()
             )
         );
-
         if self.use_on_cd {
             println!("{}", shell.use_on_cd(&config));
         }
