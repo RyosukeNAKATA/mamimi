@@ -17,6 +17,7 @@ pub enum MamimiError {
     VersionNotFound { version: InputVersion },
 }
 
+#[derive(clap::Parser, Debug)]
 pub struct Global {
     pub version: InputVersion,
 }

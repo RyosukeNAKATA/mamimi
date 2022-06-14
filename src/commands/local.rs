@@ -18,6 +18,7 @@ pub enum MamimiError {
     CannotInferVersion,
 }
 
+#[derive(clap::Parser, Debug)]
 pub struct Local {
     pub version: Option<InputVersion>,
 }

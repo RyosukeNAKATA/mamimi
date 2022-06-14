@@ -16,25 +16,25 @@ pub struct Cli {
 #[derive(clap::Parser, Debug)]
 pub enum SubCommand {
     /// Sets environment variables for initializing mamimi
-    #[clap(name = "init")]
+    #[clap(name = "init", bin_name = "init")]
     Init(commands::init::Init),
     /// Installs a specific Python version
-    #[clap(name = "install")]
+    #[clap(name = "install", bin_name = "install")]
     Install(commands::install::Install),
     /// Uninstall a specific Python version
     #[clap(name = "uninstall", bin_name = "uninstall")]
     Uninstall(commands::uninstall::Uninstall),
     /// Lists installed Python version
-    #[clap(name = "versions")]
+    #[clap(name = "versions", bin_name = "versions")]
     Versions(commands::versions::Versions),
     /// Sets the current Python version
-    #[clap(name = "local")]
+    #[clap(name = "local", bin_name = "local")]
     Local(commands::local::Local),
     /// Sets the global Python version
-    #[clap(name = "global")]
+    #[clap(name = "global", bin_name = "global")]
     Global(commands::global::Global),
     /// Print shell completions to stdout
-    #[clap(name = "completions")]
+    #[clap(name = "completions", bin_name = "completions")]
     Completions(commands::completions::Completions),
 }
 

@@ -16,6 +16,7 @@ pub enum MamimiError {
     SemverError(#[from] semver::Error),
 }
 
+#[derive(clap::Parser, Debug)]
 pub struct Versions {}
 
 impl crate::commands::command::Command for Versions {

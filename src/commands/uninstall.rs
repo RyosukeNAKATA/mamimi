@@ -26,6 +26,7 @@ pub enum MamimiError {
     MamimipathNotFound,
 }
 
+#[derive(clap::Parser, Debug)]
 pub struct Uninstall {
     version: InputVersion,
 }
