@@ -1,7 +1,7 @@
 use crate::config::MamimiConfig;
+use crate::current_python_version::current_python_version;
 use crate::outln;
 use crate::python_version::PythonVersion;
-use crate::current_python_version::current_python_version;
 use colored::Colorize;
 use log::debug;
 use thiserror::Error;
@@ -18,7 +18,7 @@ pub enum MamimiError {
 
 pub struct Versions {}
 
-impl crate::command::Command for Versions {
+impl crate::commands::command::Command for Versions {
     type Error = MamimiError;
 
     fn apply(&self, config: &MamimiConfig) -> Result<(), Self::Error> {
@@ -44,12 +44,18 @@ impl crate::command::Command for Versions {
             );
             if let Some(current_python_version) = current_python_version {
                 if current_python_version == version {
-                    outln!(config #info, "{} {}", "*".green(), version.to_string().green());
+                    outln!(
+                        config,
+                        Error,
+                        "{} {}",
+                        "*".green(),
+                        version.to_string().green()
+                    );
                 } else {
-                    outln!(config #info, "{} {}", " ", version);
+                    outln!(config, Error, "{} {}", " ", version);
                 }
             } else {
-                outln!(config #info, "{} {}", " ", version);
+                outln!(config, Error, "{} {}", " ", version);
             };
         }
         Ok(())
