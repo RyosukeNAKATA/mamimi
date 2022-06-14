@@ -30,7 +30,7 @@ impl Command for Global {
             version => return Err(MamimiError::VersionNotFound { version }),
         };
         if !&config
-            .python_versions_dir()
+            .versions_dir()
             .join(self.version.to_string())
             .exists()
         {
