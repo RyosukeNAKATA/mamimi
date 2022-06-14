@@ -11,8 +11,8 @@ readme = "README.md"
 [dependencies]
 anyhow = "1.0.51"
 chrono = "0.4.19"
-clap = { version = "3.0.14", features = ["derive", "env"] }
-clap_complete = "3.0.6"
+clap = { version = "3.0.18", features = ["derive", "env"] }
+clap_complete = "3.1.1"
 colored = "2.0.0"
 dirs = "4.0.0"
 encoding_rs_io = "0.1.7"

@@ -5,7 +5,7 @@ use clap::Parser;
 
 /// Blazingly fast python manager
 #[derive(clap::Parser, Debug)]
-#[clap(name="mamimi",version=env!("CARGO_PKG_VERSION"),bin_name="mamimi")]
+#[clap(name = "mamimi", version = env!("CARGO_PKG_VERSION"), bin_name = "mamimi")]
 pub struct Cli {
     #[clap(flatten)]
     pub config: MamimiConfig,
