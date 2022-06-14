@@ -4,18 +4,18 @@ use std::path::Path;
 pub trait Shell: Debug {
     fn path(&self, path: &Path) -> anyhow::Result<String>;
     fn set_env_var(&self, name: &str, value: &str) -> String;
-    fn use_on_cd(&self, config: &crate::config::MamimiConfig) -> anyhow::Result<String>;
-    fn rehash(&self) -> clap_complete::Shell {
+    fn rehash(&self) -> Option<String> {
         None
     }
     fn to_clap_shell(&self) -> clap_complete::Shell;
+    fn use_on_cd(&self, config: &crate::config::MamimiConfig) -> String;
 }
 
 #[cfg(windows)]
 pub const AVAILABLE_SHELLS: &[&str; 5] = &["cmd", "powershell", "bash", "fish", "zsh"];
 
 #[cfg(unix)]
-pub const AVAILABLE_SHELLS: &[&str; 5] = &["bash", "fish", "zsh"];
+pub const AVAILABLE_SHELLS: &[&str; 4] = &["bash", "fish", "zsh", "powershell"];
 
 impl std::str::FromStr for Box<dyn Shell> {
     type Err = String;

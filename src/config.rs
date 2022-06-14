@@ -66,7 +66,7 @@ impl Default for MamimiConfig {
             python_ftp_mirror: Url::parse("https://www.python.org/ftp/python/").unwrap(),
             base_dir: None,
             multishell_path: None,
-            log_level: LogLevel::default(),
+            log_level: LogLevel::Info,
             version_file_strategy: VersionFileStrategy::default(),
         }
     }

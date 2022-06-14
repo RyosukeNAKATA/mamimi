@@ -1,4 +1,5 @@
-use super::shell::Shell;
+use crate::shell::Shell;
+use anyhow::Ok;
 use indoc::indoc;
 use std::path::Path;
 
@@ -6,26 +7,26 @@ use std::path::Path;
 pub struct Bash;
 
 impl Shell for Bash {
-    fn to_clap_shell(&self) -> clap_complete::Shell {
-        clap_complete::Shell::Bash
+    fn path(&self, path: &Path) -> anyhow::Result<String> {
+        Ok(format!("export PATH={:?}:$PATH", path.to_str().unwrap()))
     }
-    fn path(&self, path: &Path) -> String {
-        format!("export PATH={:?}:$PATH", path.to_str().unwrap())
-    }
-
     fn set_env_var(&self, name: &str, value: &str) -> String {
         format!("export {}={:?}", name, value)
     }
-
-    fn use_on_cd(&self, _config: &crate::config::MamimiConfig) -> String {
+    fn rehash(&self) -> Option<String> {
+        Some("rehash".to_string())
+    }
+    fn to_clap_shell(&self) -> clap_complete::Shell {
+        clap_complete::Shell::Bash
+    }
+    fn use_on_cd(&self, config: &crate::config::MamimiConfig) -> String {
         indoc!(
             r#"
-                _mamimicd() {
-                \cd "$@" || return $?
-                mamimi --log-level quiet local
+                __mamimicd() {
+                    \cd "$@" || return $?
+                    mamimi --log-level quiet local
                 }
-
-                alias cd=_mamimicd
+                alias cd=__mamimicd
             "#
         )
         .into()
