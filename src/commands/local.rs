@@ -1,6 +1,6 @@
 use crate::input_version::InputVersion;
 use crate::symlink::{create_symlink_dir, remove_symlink_dir};
-use crate::version_file::get_user_version_for_directory;
+use crate::version_files::get_user_version_for_directory;
 use log::debug;
 use thiserror::Error;
 
@@ -22,7 +22,7 @@ pub struct Local {
     pub version: Option<InputVersion>,
 }
 
-impl crate::commands::Command for Local {
+impl crate::commands::command::Command for Local {
     type Error = MamimiError;
 
     fn apply(&self, config: &crate::config::MamimiConfig) -> Result<(), Self::Error> {
