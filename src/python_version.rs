@@ -65,7 +65,7 @@ impl<'de> serde::Deserialize<'de> for PythonVersion {
 impl std::fmt::Display for PythonVersion {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Semver(semver) => write!(f, "v{}", semver),
+            Self::Semver(semver) => write!(f, "{}", semver),
             Self::System => write!(f, "system"),
         }
     }
