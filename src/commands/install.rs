@@ -162,10 +162,21 @@ fn extract_archive_into<P: AsRef<Path>>(
     Ok(())
 }
 
+#[cfg(unix)]
 fn package_url(version: &PythonVersion) -> Url {
     debug!("package url");
     Url::parse(&format!(
         "https://www.python.org/ftp/python/{}/Python-{}.tar.xz",
+        version, version
+    ))
+    .unwrap()
+}
+
+#[cfg(windows)]
+fn package_url(version: &PythonVersion) -> Url {
+    debug!("package url");
+    Url::parse(&format!(
+        "https://www.python.org/ftp/python/{}/Python-{}-embed-amd64.zip",
         version, version
     ))
     .unwrap()
