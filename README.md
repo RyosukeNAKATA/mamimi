@@ -17,7 +17,7 @@ She raises reptiles(chameleon and Leopard gecko). Bye the way, Pythons are a typ
 
 # Contribution
 
-Contributions, issues and pull requests are welcome !
+Contributions, issues and pull requests are welcome!
 
 # Reference
 
