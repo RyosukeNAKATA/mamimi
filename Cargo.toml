@@ -9,29 +9,29 @@ repository = "https://github.com/RyosukeNAKATA/mamimi"
 readme = "README.md"
 
 [dependencies]
-anyhow = "1.0.51"
-chrono = "0.4.19"
-clap = { version = "3.0.18", features = ["derive", "env"] }
-clap_complete = "3.1.1"
+anyhow = "1.0.65"
+chrono = "0.4.22"
+clap = { version = "4.0.8", features = ["derive", "env"] }
+clap_complete = "4.0.2"
 colored = "2.0.0"
 dirs = "4.0.0"
 encoding_rs_io = "0.1.7"
-env_logger = "0.9.0"
-indoc = "1.0.3"
-itertools = "0.10.3"
+env_logger = "0.9.1"
+indoc = "1.0.7"
+itertools = "0.10.5"
 junction = "0.2.0"
-log = "0.4.14"
+log = "0.4.17"
 num_cpus = "1.13.1"
-regex = "1.5.4"
+regex = "1.6.0"
 reqwest = { version = "0.11", features = ["blocking", "json"] }
 scraper = "0.12.0"
-semver = "1.0.4"
-serde =  { version = "1.0.136", features = ["derive"] }
+semver = "1.0.14"
+serde =  { version = "1.0.145", features = ["derive"] }
 tar = "0.4.38"
-tempfile = "3.2.0"
-thiserror = "1.0.30"
-url = "2.2.2"
-xz2 = "0.1.6"
+tempfile = "3.3.0"
+thiserror = "1.0.37"
+url = "2.3.1"
+xz2 = "0.1.7"
 zip = "0.5.13"
 
 [features]
